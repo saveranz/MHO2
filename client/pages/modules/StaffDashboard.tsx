@@ -14,6 +14,7 @@ import {
   FileText,
   LogOut,
   MapPin,
+  Menu,
   MessageSquare,
   Pencil,
   Plus,
@@ -952,6 +953,7 @@ export default function StaffDashboard() {
   const { user, isLoggedIn, logout } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<StaffTabKey>("overview");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (!isLoggedIn) navigate("/login");
@@ -977,15 +979,53 @@ export default function StaffDashboard() {
 
   return (
     <div className="flex min-h-screen bg-slate-50">
+      {/* ── Mobile top bar ── */}
+      <div className="fixed top-0 left-0 right-0 z-30 flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3 shadow-sm md:hidden">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-widest text-health-600">MHO · Bongabong</p>
+          <p className="text-sm font-bold text-slate-800">Staff Portal</p>
+        </div>
+        <button
+          type="button"
+          onClick={() => setSidebarOpen(true)}
+          className="rounded-xl border border-slate-200 p-2 text-slate-600 hover:bg-slate-50"
+          aria-label="Open menu"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
+      </div>
+
+      {/* ── Backdrop overlay (mobile) ── */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/40 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* ── Sidebar ── */}
-      <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col overflow-y-auto border-r border-slate-200 bg-white shadow-sm md:flex">
+      <aside className={`fixed top-0 left-0 z-50 h-screen w-60 shrink-0 flex-col overflow-y-auto border-r border-slate-200 bg-white shadow-sm transition-transform duration-300 md:sticky md:translate-x-0 md:flex ${
+        sidebarOpen ? "flex translate-x-0" : "-translate-x-full md:flex"
+      }`}>
         {/* Branding */}
         <div className="border-b border-slate-100 bg-gradient-to-br from-health-700 to-emerald-600 px-5 py-5 text-white">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-health-100">
-            MHO · Bongabong
-          </p>
-          <h2 className="mt-1 text-lg font-bold leading-snug">Staff Portal</h2>
-          <p className="mt-1 truncate text-xs text-white/75">{profile.position}</p>
+          <div className="flex items-start justify-between">
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-health-100">
+                MHO · Bongabong
+              </p>
+              <h2 className="mt-1 text-lg font-bold leading-snug">Staff Portal</h2>
+              <p className="mt-1 truncate text-xs text-white/75">{profile.position}</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setSidebarOpen(false)}
+              className="ml-2 shrink-0 rounded-lg p-1.5 text-white/70 hover:bg-white/20 md:hidden"
+              aria-label="Close menu"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
         </div>
 
         {/* Date */}
@@ -1005,7 +1045,7 @@ export default function StaffDashboard() {
               <button
                 key={tab.id}
                 type="button"
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => { setActiveTab(tab.id); setSidebarOpen(false); }}
                 className={cn(
                   "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-all",
                   isActive ? "bg-health-600 text-white shadow" : "text-slate-600 hover:bg-health-50 hover:text-health-700"
@@ -1041,7 +1081,7 @@ export default function StaffDashboard() {
       </aside>
 
       {/* ── Main content ── */}
-      <main className="flex-1 overflow-y-auto px-4 py-6 md:px-8 md:py-8">
+      <main className="flex-1 overflow-y-auto px-4 py-6 pt-20 md:pt-6 md:px-8 md:py-8">
         <section className="mb-6">
           <h2 className="text-2xl font-bold text-slate-900">{tabMeta?.label}</h2>
         </section>

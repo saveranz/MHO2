@@ -18,6 +18,7 @@ import {
   Activity,
   LogOut,
   ChevronRight,
+  Menu,
   X,
   Merge,
   UserCheck,
@@ -306,6 +307,7 @@ export default function PatientManagement() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [currentView, setCurrentView] = useState<SidebarView>("dashboard");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [patients, setPatients] = useState<Patient[]>(INITIAL_PATIENTS);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [showProfileModal, setShowProfileModal] = useState(false);
@@ -954,18 +956,48 @@ export default function PatientManagement() {
             </div>
             <span className="text-lg font-bold text-health-700">MHO Bongabong</span>
           </Link>
-          <div className="flex items-center gap-4">
-            <span className="text-sm font-medium text-gray-600">{user?.name}</span>
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-gray-600 hidden sm:inline">{user?.name}</span>
             <Button variant="outline" size="sm" onClick={logout}>
               <LogOut className="w-4 h-4 mr-2" /> Logout
             </Button>
+            <button
+              type="button"
+              onClick={() => setSidebarOpen(true)}
+              className="md:hidden rounded-xl border border-slate-200 p-2 text-slate-600 hover:bg-slate-50"
+              aria-label="Open menu"
+            >
+              <Menu className="h-4 w-4" />
+            </button>
           </div>
         </div>
       </header>
 
       <div className="flex flex-1 overflow-hidden">
+        {/* Backdrop overlay (mobile) */}
+        {sidebarOpen && (
+          <div
+            className="fixed inset-0 z-40 bg-black/40 md:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
         {/* Sidebar */}
-        <aside className="w-56 flex-shrink-0 border-r border-slate-200 bg-white p-4 space-y-1">
+        <aside className={`fixed top-0 left-0 z-50 h-screen w-56 flex-shrink-0 border-r border-slate-200 bg-white p-4 space-y-1 flex flex-col overflow-y-auto transition-transform duration-300 md:relative md:translate-x-0 ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full md:flex"
+        }`}>
+          {/* Mobile close button */}
+          <div className="flex items-center justify-between mb-2 md:hidden">
+            <span className="text-sm font-bold text-health-700">Navigation</span>
+            <button
+              type="button"
+              onClick={() => setSidebarOpen(false)}
+              className="rounded-lg p-1 text-slate-400 hover:bg-slate-100"
+              aria-label="Close menu"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
           {(
             [
               { view: "dashboard" as SidebarView, icon: Home, label: "Dashboard" },
@@ -975,7 +1007,7 @@ export default function PatientManagement() {
           ).map(({ view, icon: Icon, label }) => (
             <button
               key={view}
-              onClick={() => setCurrentView(view)}
+              onClick={() => { setCurrentView(view); setSidebarOpen(false); }}
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${
                 currentView === view
                   ? "bg-gradient-to-r from-health-500 to-health-600 text-white shadow-sm"
@@ -1028,7 +1060,7 @@ export default function PatientManagement() {
               </div>
 
               {/* Personal Info Grid */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <p className="text-xs text-gray-400 mb-1">Date of Birth</p>
                   <p className="font-medium text-gray-900">
@@ -1064,7 +1096,7 @@ export default function PatientManagement() {
               {/* Medical Info */}
               <div className="p-4 bg-red-50 rounded-xl">
                 <h3 className="font-semibold text-gray-800 mb-3">Medical Information</h3>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <p className="text-xs text-gray-400 mb-1">Blood Group</p>
                     <p className="font-bold text-red-600 text-xl">{selectedPatient.bloodGroup}</p>
@@ -1081,7 +1113,7 @@ export default function PatientManagement() {
               {/* Last Visit */}
               <div className="p-4 bg-gray-50 rounded-xl">
                 <h3 className="font-semibold text-gray-800 mb-3">Last Visit</h3>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <p className="text-xs text-gray-400 mb-1">Date</p>
                     <p className="font-medium text-gray-900">
@@ -1129,7 +1161,7 @@ export default function PatientManagement() {
             </div>
           )}
 
-          <div className="grid grid-cols-2 gap-4 py-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-2">
             {/* Auto Patient ID */}
             <div className="col-span-2">
               <Label>Patient ID (auto-generated)</Label>

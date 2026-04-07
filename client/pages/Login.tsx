@@ -68,7 +68,7 @@ export default function Login() {
       <div className="absolute top-0 right-0 w-96 h-96 bg-health-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float"></div>
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-health-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float" style={{animationDelay: '3s'}}></div>
 
-      <div className="container mx-auto px-4 py-20 relative z-10">
+      <div className="container mx-auto px-4 py-10 md:py-20 relative z-10">
         <Link
           to="/"
           className="inline-flex items-center gap-2 text-health-600 hover:text-health-700 font-medium mb-12 transition-all hover:gap-3 group"

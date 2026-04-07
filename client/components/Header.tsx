@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
-import { Activity, LogOut } from "lucide-react";
+import { Activity, LogOut, Menu, X } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { useState } from "react";
 
 export default function Header() {
   const { user, logout, isLoggedIn } = useAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const getDashboardPath = () => {
     switch (user?.role) {
@@ -49,7 +51,7 @@ export default function Header() {
             </a>
           </nav>
 
-          <div className="flex gap-3 items-center">
+          <div className="flex gap-2 items-center">
             {isLoggedIn ? (
               <>
                 <span className="text-sm text-gray-600 hidden md:inline font-medium">
@@ -57,7 +59,7 @@ export default function Header() {
                 </span>
                 <Link
                   to={getDashboardPath()}
-                  className="px-5 py-2.5 bg-gradient-to-r from-health-500 to-health-600 text-white font-medium rounded-xl hover:shadow-glow transition-all hover:scale-105"
+                  className="px-5 py-2.5 bg-gradient-to-r from-health-500 to-health-600 text-white font-medium rounded-xl hover:shadow-glow transition-all hover:scale-105 text-sm"
                 >
                   Dashboard
                 </Link>
@@ -72,14 +74,57 @@ export default function Header() {
             ) : (
               <Link
                 to="/login"
-                className="px-6 py-2.5 bg-gradient-to-r from-health-500 to-health-600 text-white font-medium rounded-xl hover:shadow-glow transition-all hover:scale-105"
+                className="px-4 py-2.5 bg-gradient-to-r from-health-500 to-health-600 text-white font-medium rounded-xl hover:shadow-glow transition-all hover:scale-105 text-sm"
               >
                 Staff Login
               </Link>
             )}
+            {/* Hamburger — mobile only */}
+            <button
+              type="button"
+              onClick={() => setMenuOpen((o) => !o)}
+              className="md:hidden p-2.5 text-health-600 hover:bg-health-50 rounded-xl transition-all"
+              aria-label="Toggle menu"
+            >
+              {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
           </div>
         </div>
       </div>
+
+      {/* Mobile nav dropdown */}
+      {menuOpen && (
+        <div className="md:hidden border-t border-health-200/50 bg-white/95 backdrop-blur-xl px-4 py-3 flex flex-col gap-1">
+          <Link
+            to="/"
+            onClick={() => setMenuOpen(false)}
+            className="px-3 py-2.5 rounded-xl text-foreground font-medium hover:bg-health-50 hover:text-health-600 transition-colors"
+          >
+            Home
+          </Link>
+          <a
+            href="#about"
+            onClick={() => setMenuOpen(false)}
+            className="px-3 py-2.5 rounded-xl text-foreground font-medium hover:bg-health-50 hover:text-health-600 transition-colors"
+          >
+            About
+          </a>
+          <a
+            href="#services"
+            onClick={() => setMenuOpen(false)}
+            className="px-3 py-2.5 rounded-xl text-foreground font-medium hover:bg-health-50 hover:text-health-600 transition-colors"
+          >
+            Services
+          </a>
+          <a
+            href="#contact"
+            onClick={() => setMenuOpen(false)}
+            className="px-3 py-2.5 rounded-xl text-foreground font-medium hover:bg-health-50 hover:text-health-600 transition-colors"
+          >
+            Contact
+          </a>
+        </div>
+      )}
     </header>
   );
 }
