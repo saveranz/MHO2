@@ -132,56 +132,6 @@ export default function Login() {
             </form>
 
           </div>
-
-          <div className="mt-8 glass-light p-8 border-2 border-health-200/50 rounded-2xl shadow-lg backdrop-blur-xl">
-            <div className="flex items-center gap-2 mb-5">
-              <div className="w-1 h-6 bg-gradient-to-b from-health-500 to-health-600 rounded-full"></div>
-              <p className="text-sm font-bold text-gray-900">Demo Credentials</p>
-            </div>
-            <div className="space-y-4">
-              <div className="p-4 bg-white/60 rounded-xl hover:bg-white/80 transition-all">
-                <p className="text-xs font-semibold text-health-700 mb-1">Admin (Super)</p>
-                <p className="text-xs text-gray-600">
-                  <span className="font-mono bg-health-50 px-2 py-1 rounded">admin@mho.gov.ph</span>
-                  {" • "}
-                  <span className="font-mono bg-health-50 px-2 py-1 rounded">admin123</span>
-                </p>
-              </div>
-              <div className="p-4 bg-white/60 rounded-xl hover:bg-white/80 transition-all">
-                <p className="text-xs font-semibold text-health-700 mb-1">Doctor (Dr. Santos)</p>
-                <p className="text-xs text-gray-600">
-                  <span className="font-mono bg-health-50 px-2 py-1 rounded">dr.santos@mho.gov.ph</span>
-                  {" • "}
-                  <span className="font-mono bg-health-50 px-2 py-1 rounded">santos123</span>
-                </p>
-              </div>
-              <div className="p-4 bg-white/60 rounded-xl hover:bg-white/80 transition-all">
-                <p className="text-xs font-semibold text-health-700 mb-1">Nurse (Elena Cruz)</p>
-                <p className="text-xs text-gray-600">
-                  <span className="font-mono bg-health-50 px-2 py-1 rounded">nurse.elena@mho.gov.ph</span>
-                  {" • "}
-                  <span className="font-mono bg-health-50 px-2 py-1 rounded">elena123</span>
-                </p>
-              </div>
-              <div className="p-4 bg-white/60 rounded-xl hover:bg-white/80 transition-all">
-                <p className="text-xs font-semibold text-health-700 mb-1">Midwife (Ana Lopez)</p>
-                <p className="text-xs text-gray-600">
-                  <span className="font-mono bg-health-50 px-2 py-1 rounded">midwife.ana@mho.gov.ph</span>
-                  {" • "}
-                  <span className="font-mono bg-health-50 px-2 py-1 rounded">ana123</span>
-                </p>
-              </div>
-              <div className="p-4 bg-white/60 rounded-xl hover:bg-white/80 transition-all border border-health-200">
-                <p className="text-xs font-semibold text-health-700 mb-1">Patient Records Officer</p>
-                <p className="text-xs text-gray-600">
-                  <span className="font-mono bg-health-50 px-2 py-1 rounded">records@mho.gov.ph</span>
-                  {" • "}
-                  <span className="font-mono bg-health-50 px-2 py-1 rounded">records123</span>
-                </p>
-                <p className="text-xs text-gray-400 mt-1">→ Goes directly to Patient Management</p>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
