@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Calendar as CalendarIcon,
@@ -163,7 +163,7 @@ type CalendarView = "month" | "week";
 
 export default function Appointments() {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user, logout, isLoggedIn, loading } = useAuth();
   const [currentView, setCurrentView] = useState<SidebarView>("calendar");
   const [calendarView, setCalendarView] = useState<CalendarView>("week");
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -172,6 +172,15 @@ export default function Appointments() {
   const [selectedAppointment, setSelectedAppointment] = useState<typeof mockAppointments[0] | null>(null);
   const [patientCode, setPatientCode] = useState("");
   const [patientName, setPatientName] = useState("");
+
+  // Auth protection
+  useEffect(() => {
+    if (loading) return; // Wait for auth to load
+    if (!isLoggedIn) navigate("/login");
+  }, [isLoggedIn, loading, navigate]);
+
+  // Show nothing while loading
+  if (loading || !isLoggedIn) return null;
 
   const handlePatientCodeChange = (code: string) => {
     setPatientCode(code.toUpperCase());

@@ -1,177 +1,193 @@
 import Header from "@/components/Header";
 import {
   Activity,
-  CheckCircle2,
-  Clock3,
-  HeartPulse,
-  MapPin,
-  PhoneCall,
-  Pill,
-  ShieldCheck,
-  Stethoscope,
-  Syringe,
   Users,
+  Stethoscope,
+  Heart,
+  UserCheck,
+  PlayCircle,
 } from "lucide-react";
-
-const services = [
-  {
-    icon: Stethoscope,
-    title: "General Medical Consultation",
-    description:
-      "Support for common illnesses, routine checkups, and basic medical assessment for residents.",
-  },
-  {
-    icon: Syringe,
-    title: "Immunization Services",
-    description:
-      "Vaccination guidance and community immunization support for children, adults, and priority groups.",
-  },
-  {
-    icon: HeartPulse,
-    title: "Maternal & Child Health",
-    description:
-      "Health monitoring, wellness education, and preventive care for mothers, infants, and young children.",
-  },
-  {
-    icon: Pill,
-    title: "Medicine & Treatment Guidance",
-    description:
-      "Clear health advice, prescription support, and patient education for safer recovery and follow-up care.",
-  },
-];
-
-const programs = [
-  {
-    icon: Activity,
-    title: "Community Health Programs",
-    description: "Health awareness campaigns, screening activities, and preventive outreach across Bongabong.",
-  },
-  {
-    icon: Users,
-    title: "Family and Wellness Support",
-    description: "Patient-centered assistance that encourages healthy living, early care, and regular checkups.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Trusted Public Health Service",
-    description: "A welcoming office environment focused on safe, respectful, and accessible medical support.",
-  },
-];
-
-const highlights = [
-  "Public health information made clear and easy to understand",
-  "Clean and organized office presentation for community trust",
-  "Preventive care, consultation, and wellness support in one place",
-  "Focused on the needs of families in Bongabong",
-];
 
 export default function Index() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-health-50/40 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       <Header />
 
-      <section id="about" className="relative overflow-hidden bg-gradient-to-br from-health-50 via-white to-emerald-50/60">
-        <div className="absolute inset-0 gradient-mesh opacity-60" />
-        <div className="absolute -top-10 -left-10 h-56 w-56 rounded-full bg-health-200/40 blur-3xl" />
-        <div className="absolute bottom-0 right-0 h-64 w-64 rounded-full bg-emerald-100/60 blur-3xl" />
-
-        <div className="container relative z-10 mx-auto px-4 py-16 md:py-24 lg:py-28">
-          <div className="grid items-center gap-10 lg:grid-cols-[1.15fr_0.85fr]">
-            <div className="space-y-7">
-              <div className="inline-flex items-center gap-2 rounded-full border border-health-200 bg-white/80 px-4 py-2 text-sm font-semibold text-health-700 shadow-sm backdrop-blur-sm">
-                <HeartPulse className="h-4 w-4" />
-                Public health care for the community of Bongabong
-              </div>
-
-              <div className="space-y-4">
-                <h1 className="text-4xl font-bold leading-tight text-slate-900 md:text-6xl">
-                  Medical Health Office of Bongabong
+      {/* Hero Section */}
+      <section className="relative overflow-hidden pt-12 pb-20">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Left Content */}
+            <div className="space-y-8">
+              <div className="space-y-6">
+                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 leading-tight">
+                  Get Ready For Your Best Ever Medical Experience
                 </h1>
-                <p className="max-w-2xl text-lg leading-8 text-slate-600 md:text-xl">
-                  A clear and welcoming public health website that helps residents learn about medical services, wellness programs, office hours, and community care support.
+                <p className="text-lg text-gray-600 max-w-xl leading-relaxed">
+                  MHO Bongabong provides comprehensive healthcare services to the community of Bongabong, Oriental Mindoro. We are committed to delivering quality medical care with compassion and excellence.
                 </p>
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-2">
-                {highlights.map((item) => (
-                  <div key={item} className="flex items-start gap-3 rounded-2xl bg-white/80 p-3 shadow-sm ring-1 ring-health-100">
-                    <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-health-600" />
-                    <span className="text-sm text-slate-700">{item}</span>
+              <div className="flex flex-wrap gap-4 items-center">
+                <button className="px-8 py-4 bg-gray-900 text-white font-semibold rounded-full hover:bg-gray-800 transition-all hover:scale-105 shadow-lg">
+                  Book Now
+                </button>
+                <button className="flex items-center gap-3 text-gray-700 font-semibold hover:text-cyan-600 transition-colors">
+                  <div className="w-14 h-14 bg-cyan-400 rounded-full flex items-center justify-center shadow-lg">
+                    <PlayCircle className="w-7 h-7 text-white fill-white" />
                   </div>
-                ))}
+                  See How We Work
+                </button>
               </div>
 
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <a
-                  href="#services"
-                  className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-health-500 to-health-600 px-6 py-3.5 font-semibold text-white shadow-lg transition-all hover:scale-[1.02] hover:shadow-glow"
-                >
-                  View Services
-                </a>
-                <a
-                  href="#contact"
-                  className="inline-flex items-center justify-center rounded-xl border border-health-200 bg-white px-6 py-3.5 font-semibold text-health-700 transition-colors hover:bg-health-50"
-                >
-                  Office Information
-                </a>
-              </div>
-
-              <div className="grid gap-4 border-t border-health-100 pt-4 sm:grid-cols-3">
-                <div>
-                  <p className="text-2xl font-bold text-health-700">Bongabong</p>
-                  <p className="text-sm text-slate-600">community-focused care</p>
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-health-700">Prevention</p>
-                  <p className="text-sm text-slate-600">wellness and early care</p>
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-health-700">Support</p>
-                  <p className="text-sm text-slate-600">clear medical guidance</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="relative">
-              <div className="absolute -top-4 -right-4 h-24 w-24 rounded-full bg-health-200/60 blur-2xl" />
-              <div className="relative overflow-hidden rounded-[28px] border border-health-100 bg-white/90 p-6 shadow-2xl backdrop-blur-sm">
-                <div className="mb-5 flex items-center justify-between">
+              {/* Stats */}
+              <div className="flex flex-wrap gap-6 pt-8">
+                <div className="flex items-center gap-4 bg-white rounded-2xl px-6 py-5 shadow-lg border border-gray-100">
+                  <div className="w-16 h-16 bg-cyan-100 rounded-2xl flex items-center justify-center">
+                    <Users className="w-8 h-8 text-cyan-600" />
+                  </div>
                   <div>
-                    <p className="text-sm font-medium text-health-600">Office details</p>
-                    <h3 className="text-2xl font-bold text-slate-900">Community health information</h3>
-                  </div>
-                  <div className="rounded-xl bg-health-50 px-3 py-2 text-sm font-semibold text-health-700">
-                    Public service
+                    <p className="text-4xl font-bold text-gray-900">93%</p>
+                    <p className="text-sm text-gray-600 font-medium">Satisfaction Rate</p>
                   </div>
                 </div>
 
+                <div className="flex items-center gap-4 bg-white rounded-2xl px-6 py-5 shadow-lg border border-gray-100">
+                  <div className="w-16 h-16 bg-cyan-100 rounded-2xl flex items-center justify-center">
+                    <UserCheck className="w-8 h-8 text-cyan-600" />
+                  </div>
+                  <div>
+                    <p className="text-4xl font-bold text-gray-900">21+</p>
+                    <p className="text-sm text-gray-600 font-medium">Expert Doctors</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Content - Doctor Image with Cards */}
+            <div className="relative lg:pl-8">
+              {/* Large cyan circle background */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-br from-cyan-300 to-cyan-400 rounded-full opacity-90"></div>
+              
+              <div className="relative z-10">
+                {/* Emergency Contact Card - Top Left */}
+                <div className="absolute top-16 -left-4 lg:left-0 bg-white rounded-2xl shadow-2xl px-6 py-4 flex items-center gap-4 z-20 border border-gray-100">
+                  <div className="w-14 h-14 bg-cyan-400 rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 font-medium">24 Hrs Emergency</p>
+                    <p className="font-bold text-gray-900 text-lg">+63 912 345 6789</p>
+                  </div>
+                </div>
+
+                {/* Patients Love It Card - Bottom Left */}
+                <div className="absolute bottom-24 left-0 bg-white rounded-2xl shadow-2xl px-6 py-5 z-20 border border-gray-100">
+                  <p className="text-lg font-bold text-gray-900 mb-3">1.5K+ Patients Love It</p>
+                  <div className="flex -space-x-3">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400 to-cyan-600 border-4 border-white"></div>
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 border-4 border-white"></div>
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 border-4 border-white"></div>
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-pink-600 border-4 border-white"></div>
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-teal-400 to-teal-600 border-4 border-white"></div>
+                    <div className="w-12 h-12 rounded-full bg-red-500 border-4 border-white flex items-center justify-center">
+                      <span className="text-white text-lg font-bold">+</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 24 Hrs Doctor Card - Bottom Right */}
+                <div className="absolute bottom-8 right-0 lg:right-8 bg-white rounded-2xl shadow-2xl px-6 py-5 z-20 border border-gray-100">
+                  <div className="flex items-center gap-4">
+                    <div className="w-14 h-14 bg-cyan-100 rounded-2xl flex items-center justify-center flex-shrink-0">
+                      <UserCheck className="w-7 h-7 text-cyan-600" />
+                    </div>
+                    <div>
+                      <p className="text-lg font-bold text-gray-900">24 Hrs Service</p>
+                      <p className="text-sm text-gray-600">Providing Top Medical Care</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Doctor Image Placeholder - Center */}
+                <div className="relative mx-auto w-full max-w-md aspect-square flex items-center justify-center">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Stethoscope className="w-64 h-64 text-white/40" strokeWidth={1.5} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* All In One Treatment Section */}
+      <section className="py-24 bg-white">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Left - Images */}
+            <div className="relative">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-4">
-                  <div className="rounded-2xl bg-slate-50 p-4">
-                    <div className="mb-2 flex items-center gap-2 text-slate-800">
-                      <Clock3 className="h-4 w-4 text-health-600" />
-                      <span className="font-semibold">Office hours</span>
+                  <div className="aspect-[4/3] bg-gradient-to-br from-cyan-100 to-cyan-200 rounded-3xl overflow-hidden shadow-xl">
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Activity className="w-20 h-20 text-cyan-600/30" strokeWidth={1.5} />
                     </div>
-                    <p className="text-sm text-slate-600">Monday to Friday · Regular municipal office schedule</p>
                   </div>
+                </div>
+                <div className="space-y-4 pt-12">
+                  <div className="aspect-[3/4] bg-gradient-to-br from-cyan-200 to-cyan-300 rounded-3xl overflow-hidden shadow-2xl">
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Heart className="w-24 h-24 text-white/40" strokeWidth={1.5} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <div className="rounded-2xl border border-health-100 p-4">
-                      <p className="text-sm text-slate-500">Focus areas</p>
-                      <p className="mt-1 font-semibold text-slate-900">Consultation, immunization, maternal care</p>
-                    </div>
-                    <div className="rounded-2xl border border-health-100 p-4">
-                      <p className="text-sm text-slate-500">Service goal</p>
-                      <p className="mt-1 font-semibold text-slate-900">Accessible health support for residents</p>
-                    </div>
-                  </div>
+            {/* Right - Content */}
+            <div className="space-y-8">
+              <div className="space-y-4">
+                <h2 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
+                  All In One Treatment And Health Solution
+                </h2>
+                <p className="text-gray-600 leading-relaxed text-lg">
+                  MHO Bongabong offers a full range of primary healthcare services including consultations, maternal and child health, immunization programs, and health education for our community.
+                </p>
+              </div>
 
-                  <div className="rounded-2xl bg-gradient-to-r from-health-600 to-health-500 p-5 text-white shadow-lg">
-                    <div className="mb-2 flex items-center gap-2">
-                      <PhoneCall className="h-4 w-4" />
-                      <span className="font-semibold">Public assistance and enquiries</span>
-                    </div>
-                    <p className="text-sm text-white/90">Use this website to understand available medical services and office information at a glance.</p>
+              <div className="border-l-4 border-cyan-400 pl-6 py-3 bg-cyan-50/50 rounded-r-xl">
+                <p className="text-gray-700 leading-relaxed">
+                  Our dedicated team of healthcare professionals is committed to promoting wellness and providing accessible medical services to all barangays in Bongabong. We work closely with the community to ensure everyone receives the care they need.
+                </p>
+              </div>
+
+              {/* Feature Cards */}
+              <div className="grid md:grid-cols-3 gap-6 pt-4">
+                <div className="text-center space-y-3">
+                  <div className="w-20 h-20 bg-cyan-100 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
+                    <Stethoscope className="w-9 h-9 text-cyan-600" />
                   </div>
+                  <h3 className="font-bold text-gray-900 text-lg">Health Consultations</h3>
+                  <p className="text-sm text-gray-600 leading-relaxed">Professional medical consultations and health assessments for all ages</p>
+                </div>
+
+                <div className="text-center space-y-3">
+                  <div className="w-20 h-20 bg-cyan-100 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
+                    <Heart className="w-9 h-9 text-cyan-600" />
+                  </div>
+                  <h3 className="font-bold text-gray-900 text-lg">Maternal & Child Care</h3>
+                  <p className="text-sm text-gray-600 leading-relaxed">Comprehensive prenatal, postnatal, and pediatric healthcare services</p>
+                </div>
+
+                <div className="text-center space-y-3">
+                  <div className="w-20 h-20 bg-cyan-100 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
+                    <Users className="w-9 h-9 text-cyan-600" />
+                  </div>
+                  <h3 className="font-bold text-gray-900 text-lg">Community Programs</h3>
+                  <p className="text-sm text-gray-600 leading-relaxed">Immunization drives, health education, and barangay outreach programs</p>
                 </div>
               </div>
             </div>
@@ -179,124 +195,41 @@ export default function Index() {
         </div>
       </section>
 
-      <section id="services" className="container mx-auto px-4 py-20 md:py-24">
-        <div className="mx-auto mb-12 max-w-3xl text-center">
-          <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-health-600">Medical services</p>
-          <h2 className="text-3xl font-bold text-slate-900 md:text-5xl">Essential health support for the people of Bongabong</h2>
-          <p className="mt-4 text-lg text-slate-600">
-            The website highlights the office’s healthcare role clearly, helping residents understand available care and public health support.
-          </p>
-        </div>
-
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-          {services.map((service) => {
-            const Icon = service.icon;
-            return (
-              <div
-                key={service.title}
-                className="group rounded-3xl border border-health-100 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
-              >
-                <div className="mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-health-500 to-health-600 text-white shadow-lg">
-                  <Icon className="h-7 w-7" />
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white py-12">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="grid md:grid-cols-3 gap-8 mb-8">
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-cyan-400 rounded-xl flex items-center justify-center">
+                  <Activity className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="mb-3 text-xl font-bold text-slate-900">{service.title}</h3>
-                <p className="leading-7 text-slate-600">{service.description}</p>
+                <span className="text-xl font-bold">MHO Bongabong</span>
               </div>
-            );
-          })}
-        </div>
-      </section>
-
-      <section className="relative overflow-hidden bg-gradient-to-r from-health-700 via-health-600 to-emerald-600 py-20 text-white md:py-24">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.16),transparent_30%)]" />
-
-        <div className="container relative z-10 mx-auto px-4">
-          <div className="mx-auto mb-10 max-w-3xl text-center">
-            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-health-100">Public health programs</p>
-            <h2 className="text-3xl font-bold md:text-5xl">Programs that promote wellness, prevention, and safer communities</h2>
-          </div>
-
-          <div className="grid gap-6 md:grid-cols-3">
-            {programs.map((program) => {
-              const Icon = program.icon;
-              return (
-                <div key={program.title} className="rounded-3xl border border-white/20 bg-white/10 p-6 backdrop-blur-sm">
-                  <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-white/15">
-                    <Icon className="h-6 w-6" />
-                  </div>
-                  <h3 className="mb-2 text-xl font-bold">{program.title}</h3>
-                  <p className="text-white/90">{program.description}</p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      <section id="contact" className="container mx-auto px-4 py-20 md:py-24">
-        <div className="grid gap-8 lg:grid-cols-[1fr_0.9fr]">
-          <div className="rounded-3xl border border-health-100 bg-white p-6 shadow-sm md:p-8">
-            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-health-600">Why this site works</p>
-            <h2 className="mb-8 text-3xl font-bold text-slate-900 md:text-4xl">A clearer online presence for the Medical Health Office</h2>
-
-            <div className="space-y-5">
-              {[
-                "Presents medical and public health information in a clean, trustworthy way.",
-                "Focuses on services, wellness programs, and office details instead of appointment booking.",
-                "Gives residents a quick overview of what the office does and how it supports the community.",
-              ].map((item, index) => (
-                <div key={item} className="flex gap-4 rounded-2xl bg-slate-50 p-4">
-                  <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-health-100 text-health-700">
-                    <span className="text-lg font-bold">{index + 1}</span>
-                  </div>
-                  <p className="text-slate-700">{item}</p>
-                </div>
-              ))}
+              <p className="text-gray-400 text-sm">
+                Providing quality healthcare services to our community.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-bold mb-4">Quick Links</h3>
+              <ul className="space-y-2 text-gray-400 text-sm">
+                <li><a href="#" className="hover:text-cyan-400 transition-colors">About Us</a></li>
+                <li><a href="#" className="hover:text-cyan-400 transition-colors">Services</a></li>
+                <li><a href="#" className="hover:text-cyan-400 transition-colors">Doctors</a></li>
+                <li><a href="#" className="hover:text-cyan-400 transition-colors">Contact</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-bold mb-4">Contact</h3>
+              <ul className="space-y-2 text-gray-400 text-sm">
+                <li>Bongabong, Oriental Mindoro</li>
+                <li>+63 912 345 6789</li>
+                <li>info@mhobongabong.gov.ph</li>
+              </ul>
             </div>
           </div>
-
-          <div className="rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6 text-white shadow-xl md:p-8">
-            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-health-300">Office information</p>
-            <h2 className="text-3xl font-bold">Medical Health Office of Bongabong</h2>
-            <p className="mt-4 text-white/80">
-              A public-facing page for residents looking for health office information, services, and wellness support.
-            </p>
-
-            <div className="mt-8 space-y-4">
-              <div className="flex items-start gap-3 rounded-2xl bg-white/10 p-4">
-                <MapPin className="mt-1 h-5 w-5 text-health-300" />
-                <div>
-                  <p className="font-semibold">Location</p>
-                  <p className="text-sm text-white/80">Bongabong, Oriental Mindoro</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3 rounded-2xl bg-white/10 p-4">
-                <Clock3 className="mt-1 h-5 w-5 text-health-300" />
-                <div>
-                  <p className="font-semibold">Office hours</p>
-                  <p className="text-sm text-white/80">Monday to Friday during regular office schedule</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3 rounded-2xl bg-white/10 p-4">
-                <PhoneCall className="mt-1 h-5 w-5 text-health-300" />
-                <div>
-                  <p className="font-semibold">Public enquiries</p>
-                  <p className="text-sm text-white/80">For service details, health programs, and office assistance</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <footer className="border-t border-health-100 bg-white py-8">
-        <div className="container mx-auto flex flex-col gap-4 px-4 text-sm text-slate-600 md:flex-row md:items-center md:justify-between">
-          <div>
-            <span className="font-semibold text-slate-900">Medical Health Office of Bongabong</span> · Public health information and community medical support.
-          </div>
-          <div className="flex items-center gap-2 text-health-700">
-            <ShieldCheck className="h-4 w-4" />
-            <span>Clear, trustworthy, health-focused presentation</span>
+          <div className="border-t border-gray-800 pt-8 text-center text-gray-400 text-sm">
+            <p>© 2024 MHO Bongabong. All rights reserved.</p>
           </div>
         </div>
       </footer>

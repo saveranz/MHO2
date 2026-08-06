@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef, useCallback } from "react";
+import { useLocalStorage } from "@/hooks/use-local-storage";
 import {
   Search,
   SlidersHorizontal,
@@ -1045,7 +1046,7 @@ function InfoRow({
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export default function StaffDirectory() {
-  const [staffList, setStaffList] = useState<StaffMember[]>(INITIAL_STAFF);
+  const [staffList, setStaffList] = useLocalStorage<StaffMember[]>('staff-directory', INITIAL_STAFF);
   const [search, setSearch] = useState("");
   const [filterPosition, setFilterPosition] = useState("All Positions");
   const [filterStatus, setFilterStatus] = useState<"All" | StaffStatus>("All");

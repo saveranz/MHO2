@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   BarChart3,
@@ -106,11 +106,20 @@ type SidebarView = "dashboard" | "patients" | "financial" | "inventory" | "activ
 
 export default function Reports() {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user, logout, isLoggedIn, loading } = useAuth();
   const [currentView, setCurrentView] = useState<SidebarView>("dashboard");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [selectedPeriod, setSelectedPeriod] = useState("month");
+
+  // Auth protection
+  useEffect(() => {
+    if (loading) return; // Wait for auth to load
+    if (!isLoggedIn) navigate("/login");
+  }, [isLoggedIn, loading, navigate]);
+
+  // Show nothing while loading
+  if (loading || !isLoggedIn) return null;
 
   const maxPatientCount = Math.max(...mockReportData.monthlyPatients.map(m => m.count));
   const maxRevenue = Math.max(...mockReportData.monthlyRevenue.map(m => m.amount));

@@ -950,17 +950,24 @@ function ProfileTab({
 // ─── Main export ──────────────────────────────────────────────────────────────
 
 export default function StaffDashboard() {
-  const { user, isLoggedIn, logout } = useAuth();
+  const { user, isLoggedIn, logout, loading } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<StaffTabKey>("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
+    if (loading) return; // Wait for auth to load
+    
     if (!isLoggedIn) navigate("/login");
     else if (user?.role === "super_admin" || user?.role === "admin") navigate("/admin");
-  }, [isLoggedIn, user, navigate]);
+  }, [isLoggedIn, user, navigate, loading]);
 
-  if (!isLoggedIn || !user) return null;
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
+
+  if (loading || !isLoggedIn || !user) return null;
 
   const profile = STAFF_MAP[user.email] ?? {
     staffId: "s4",
@@ -1070,7 +1077,7 @@ export default function StaffDashboard() {
             </div>
             <button
               type="button"
-              onClick={logout}
+              onClick={handleLogout}
               className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
               title="Log out"
             >

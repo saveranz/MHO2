@@ -304,7 +304,7 @@ const EMPTY_FORM: PatientForm = {
 const ALLOWED_ROLES = ["super_admin", "admin", "doctor", "records_officer"] as const;
 
 export default function PatientManagement() {
-  const { user, logout } = useAuth();
+  const { user, logout, isLoggedIn, loading } = useAuth();
   const navigate = useNavigate();
   const [currentView, setCurrentView] = useState<SidebarView>("dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -315,8 +315,8 @@ export default function PatientManagement() {
   const [form, setForm] = useState<PatientForm>(EMPTY_FORM);
   const [formErrors, setFormErrors] = useState<string[]>([]);
   const [successId, setSuccessId] = useState<string | null>(null);
-
-  // Master List filters
+  
+  // Master List filters - MUST be before early return
   const [searchQuery, setSearchQuery] = useState("");
   const [filterBarangay, setFilterBarangay] = useState("all");
   const [filterAgeGroup, setFilterAgeGroup] = useState("all");
@@ -324,13 +324,22 @@ export default function PatientManagement() {
   const [filterLastVisit, setFilterLastVisit] = useState<LastVisitFilter>("all");
   const [filterServiceType, setFilterServiceType] = useState("all");
 
+  // Auth protection - Check if user is logged in
   useEffect(() => {
-    if (!user) {
-      navigate("/login");
-    } else if (!ALLOWED_ROLES.includes(user.role as typeof ALLOWED_ROLES[number])) {
+    if (loading) return; // Wait for auth to load
+    if (!isLoggedIn) navigate("/login");
+  }, [isLoggedIn, loading, navigate]);
+
+  // Role-based redirect
+  useEffect(() => {
+    if (!user) return;
+    if (!ALLOWED_ROLES.includes(user.role as typeof ALLOWED_ROLES[number])) {
       navigate("/staff");
     }
   }, [user, navigate]);
+
+  // Show nothing while loading
+  if (loading || !isLoggedIn) return null;
 
   // Next Patient ID based on highest existing numeric ID
   const nextPatientId = (() => {
