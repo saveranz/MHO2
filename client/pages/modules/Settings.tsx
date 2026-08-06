@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   AlertTriangle,
   Check,
@@ -89,9 +89,18 @@ const INIT_MATRIX: PermMatrix = {
 };
 
 function RolesSection() {
-  const [matrix, setMatrix] = useState<PermMatrix>(() =>
-    JSON.parse(JSON.stringify(INIT_MATRIX))
-  );
+  const [matrix, setMatrix] = useState<PermMatrix>(() => {
+    // Try to load from localStorage first
+    const saved = localStorage.getItem('roles-permissions-matrix');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return JSON.parse(JSON.stringify(INIT_MATRIX));
+      }
+    }
+    return JSON.parse(JSON.stringify(INIT_MATRIX));
+  });
   const { saved, flash } = useSaved();
 
   function toggle(roleId: string, permId: string) {
@@ -100,6 +109,12 @@ function RolesSection() {
       ...prev,
       [roleId]: { ...prev[roleId], [permId]: !prev[roleId][permId] },
     }));
+  }
+
+  function handleSave() {
+    // Save to localStorage
+    localStorage.setItem('roles-permissions-matrix', JSON.stringify(matrix));
+    flash();
   }
 
   return (
@@ -165,7 +180,7 @@ function RolesSection() {
       <div className="flex items-center gap-3">
         <button
           type="button"
-          onClick={flash}
+          onClick={handleSave}
           className="inline-flex items-center gap-2 rounded-xl bg-health-600 px-5 py-2.5 font-semibold text-white transition-colors hover:bg-health-700"
         >
           <Save className="h-4 w-4" /> Save Permissions
@@ -282,13 +297,28 @@ function ShiftEditRow({
 }
 
 function ShiftsSection() {
-  const [shifts, setShifts] = useState<ShiftTypeDef[]>(INIT_SHIFTS);
+  const [shifts, setShifts] = useState<ShiftTypeDef[]>(() => {
+    const saved = localStorage.getItem('shift-types');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return INIT_SHIFTS;
+      }
+    }
+    return INIT_SHIFTS;
+  });
   const [editId, setEditId] = useState<string | null>(null);
   const [editDraft, setEditDraft] = useState<ShiftDraft>(EMPTY_SHIFT);
   const [adding, setAdding] = useState(false);
   const [addDraft, setAddDraft] = useState<ShiftDraft>(EMPTY_SHIFT);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const { saved, flash } = useSaved();
+
+  // Save to localStorage whenever shifts change
+  useEffect(() => {
+    localStorage.setItem('shift-types', JSON.stringify(shifts));
+  }, [shifts]);
 
   function startEdit(s: ShiftTypeDef) {
     setEditId(s.id);
@@ -520,13 +550,28 @@ function LeaveEditRow({
 }
 
 function LeavesSection() {
-  const [leaves, setLeaves] = useState<LeaveTypeDef[]>(INIT_LEAVES);
+  const [leaves, setLeaves] = useState<LeaveTypeDef[]>(() => {
+    const saved = localStorage.getItem('leave-types');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return INIT_LEAVES;
+      }
+    }
+    return INIT_LEAVES;
+  });
   const [editId, setEditId] = useState<string | null>(null);
   const [editDraft, setEditDraft] = useState<LeaveDraft>(EMPTY_LEAVE);
   const [adding, setAdding] = useState(false);
   const [addDraft, setAddDraft] = useState<LeaveDraft>(EMPTY_LEAVE);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const { saved, flash } = useSaved();
+
+  // Save to localStorage whenever leaves change
+  useEffect(() => {
+    localStorage.setItem('leave-types', JSON.stringify(leaves));
+  }, [leaves]);
 
   function startEdit(l: LeaveTypeDef) {
     setEditId(l.id);
@@ -685,8 +730,23 @@ function fmt24to12(t: string) {
 }
 
 function OfficeHoursSection() {
-  const [hours, setHours] = useState<DayConfig[]>(INIT_HOURS);
+  const [hours, setHours] = useState<DayConfig[]>(() => {
+    const saved = localStorage.getItem('office-hours');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return INIT_HOURS;
+      }
+    }
+    return INIT_HOURS;
+  });
   const { saved, flash } = useSaved();
+
+  // Save to localStorage whenever hours change
+  useEffect(() => {
+    localStorage.setItem('office-hours', JSON.stringify(hours));
+  }, [hours]);
 
   function toggleDay(idx: number) {
     setHours((prev) => prev.map((d, i) => (i === idx ? { ...d, open: !d.open } : d)));

@@ -106,10 +106,10 @@ const taskRequests = [
   { title: "Prepare vaccination campaign materials", owner: "Immunization Unit", priority: "Low", status: "Planned" },
 ];
 
-const approvalItems = [
-  { request: "2-day leave request", requester: "Liza Fernandez", type: "Leave", due: "Today" },
-  { request: "Medical supply restock", requester: "Immunization Unit", type: "Supplies", due: "Tomorrow" },
-  { request: "Community seminar travel clearance", requester: "Outreach Team", type: "Travel", due: "This week" },
+const INITIAL_APPROVAL_ITEMS = [
+  { id: 1, request: "2-day leave request", requester: "Liza Fernandez", type: "Leave", due: "Today" },
+  { id: 2, request: "Medical supply restock", requester: "Immunization Unit", type: "Supplies", due: "Tomorrow" },
+  { id: 3, request: "Community seminar travel clearance", requester: "Outreach Team", type: "Travel", due: "This week" },
 ];
 
 const reportCards = [
@@ -150,6 +150,7 @@ export default function SuperAdminDashboard() {
   const [activeTab, setActiveTab] = useState<AdminTabKey>("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedReport, setSelectedReport] = useState<string | null>(null);
+  const [approvalItems, setApprovalItems] = useState(INITIAL_APPROVAL_ITEMS);
 
   useEffect(() => {
     if (loading) return; // Wait for auth to load
@@ -159,7 +160,11 @@ export default function SuperAdminDashboard() {
     }
   }, [isLoggedIn, user, navigate, loading]);
 
-  const handleApprove = (request: string, requester: string) => {
+  const handleApprove = (id: number, request: string, requester: string) => {
+    // Remove the item from the list
+    setApprovalItems(items => items.filter(item => item.id !== id));
+    
+    // Show success toast
     toast({
       title: "Request Approved",
       description: `${request} from ${requester} has been approved successfully.`,
@@ -167,7 +172,11 @@ export default function SuperAdminDashboard() {
     });
   };
 
-  const handleReject = (request: string, requester: string) => {
+  const handleReject = (id: number, request: string, requester: string) => {
+    // Remove the item from the list
+    setApprovalItems(items => items.filter(item => item.id !== id));
+    
+    // Show rejection toast
     toast({
       title: "Request Rejected",
       description: `${request} from ${requester} has been rejected.`,
@@ -869,32 +878,42 @@ RECOMMENDATIONS
             </div>
 
             <div className="space-y-4">
-              {approvalItems.map((item) => (
-                <div key={item.request} className="flex flex-col gap-4 rounded-xl border border-gray-200 p-5 hover:border-cyan-300 hover:bg-cyan-50/30 transition-all md:flex-row md:items-center md:justify-between">
-                  <div>
-                    <p className="font-semibold text-gray-900 text-lg">{item.request}</p>
-                    <p className="text-sm text-gray-600 mt-1">
-                      {item.requester} · <span className="font-medium">{item.type}</span> · Due <span className="font-medium text-amber-600">{item.due}</span>
-                    </p>
+              {approvalItems.length === 0 ? (
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4">
+                    <CheckCheck className="h-8 w-8 text-emerald-600" />
                   </div>
-                  <div className="flex gap-2">
-                    <button 
-                      type="button" 
-                      onClick={() => handleReject(item.request, item.requester)}
-                      className="rounded-xl border-2 border-gray-300 px-5 py-2.5 font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
-                    >
-                      Reject
-                    </button>
-                    <button 
-                      type="button" 
-                      onClick={() => handleApprove(item.request, item.requester)}
-                      className="rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 px-5 py-2.5 font-semibold text-white hover:shadow-lg transition-all"
-                    >
-                      Approve
-                    </button>
-                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">All caught up!</h3>
+                  <p className="text-gray-500">No pending approvals at this time.</p>
                 </div>
-              ))}
+              ) : (
+                approvalItems.map((item) => (
+                  <div key={item.id} className="flex flex-col gap-4 rounded-xl border border-gray-200 p-5 hover:border-cyan-300 hover:bg-cyan-50/30 transition-all md:flex-row md:items-center md:justify-between">
+                    <div>
+                      <p className="font-semibold text-gray-900 text-lg">{item.request}</p>
+                      <p className="text-sm text-gray-600 mt-1">
+                        {item.requester} · <span className="font-medium">{item.type}</span> · Due <span className="font-medium text-amber-600">{item.due}</span>
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <button 
+                        type="button" 
+                        onClick={() => handleReject(item.id, item.request, item.requester)}
+                        className="rounded-xl border-2 border-gray-300 px-5 py-2.5 font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+                      >
+                        Reject
+                      </button>
+                      <button 
+                        type="button" 
+                        onClick={() => handleApprove(item.id, item.request, item.requester)}
+                        className="rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 px-5 py-2.5 font-semibold text-white hover:shadow-lg transition-all"
+                      >
+                        Approve
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         )}

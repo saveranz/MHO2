@@ -808,7 +808,7 @@ export default function Appointments() {
 
             <div className="flex items-center gap-4">
               <span className="text-sm font-medium text-gray-600">{user?.name}</span>
-              <Button variant="outline" size="sm" onClick={logout} className="hover:bg-health-50">
+              <Button variant="outline" size="sm" onClick={() => { logout(); navigate("/"); }} className="hover:bg-health-50">
                 <LogOut className="w-4 h-4 mr-2" />
                 Logout
               </Button>

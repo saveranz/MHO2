@@ -1,4 +1,5 @@
 ﻿import { useState, useEffect } from "react";
+import * as React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Users,
@@ -44,6 +45,15 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { useAuth } from "@/context/AuthContext";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -324,6 +334,10 @@ export default function PatientManagement() {
   const [filterLastVisit, setFilterLastVisit] = useState<LastVisitFilter>("all");
   const [filterServiceType, setFilterServiceType] = useState("all");
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
   // Auth protection - Check if user is logged in
   useEffect(() => {
     if (loading) return; // Wait for auth to load
@@ -392,31 +406,10 @@ export default function PatientManagement() {
     setCurrentView("list");
   }
 
-  const filteredPatients = patients.filter((p) => {
-    const q = searchQuery.toLowerCase();
-    if (
-      q &&
-      !p.name.toLowerCase().includes(q) &&
-      !p.id.toLowerCase().includes(q) &&
-      !p.barangay.toLowerCase().includes(q)
-    )
-      return false;
-    if (filterBarangay !== "all" && p.barangay !== filterBarangay) return false;
-    if (filterGender !== "all" && p.gender.toLowerCase() !== filterGender) return false;
-    if (filterAgeGroup !== "all" && getAgeGroup(p.dob) !== filterAgeGroup) return false;
-    if (filterServiceType !== "all" && p.serviceType !== filterServiceType) return false;
-    if (filterLastVisit !== "all") {
-      const now = new Date();
-      const lv = new Date(p.lastVisit);
-      if (filterLastVisit === "this-month") {
-        if (lv.getMonth() !== now.getMonth() || lv.getFullYear() !== now.getFullYear())
-          return false;
-      } else if (filterLastVisit === "this-year") {
-        if (lv.getFullYear() !== now.getFullYear()) return false;
-      }
-    }
-    return true;
-  });
+  // Reset to page 1 when filters change
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, filterBarangay, filterAgeGroup, filterGender, filterLastVisit, filterServiceType]);
 
   function openProfile(patient: Patient) {
     setSelectedPatient(patient);
@@ -624,6 +617,39 @@ export default function PatientManagement() {
 
   // ─── Patient Master List ────────────────────────────────────────────────────
   function renderMasterList() {
+    // Apply filters
+    const filteredPatients = patients.filter((p) => {
+      const q = searchQuery.toLowerCase();
+      if (
+        q &&
+        !p.name.toLowerCase().includes(q) &&
+        !p.id.toLowerCase().includes(q) &&
+        !p.barangay.toLowerCase().includes(q)
+      )
+        return false;
+      if (filterBarangay !== "all" && p.barangay !== filterBarangay) return false;
+      if (filterGender !== "all" && p.gender.toLowerCase() !== filterGender) return false;
+      if (filterAgeGroup !== "all" && getAgeGroup(p.dob) !== filterAgeGroup) return false;
+      if (filterServiceType !== "all" && p.serviceType !== filterServiceType) return false;
+      if (filterLastVisit !== "all") {
+        const now = new Date();
+        const lv = new Date(p.lastVisit);
+        if (filterLastVisit === "this-month") {
+          if (lv.getMonth() !== now.getMonth() || lv.getFullYear() !== now.getFullYear())
+            return false;
+        } else if (filterLastVisit === "this-year") {
+          if (lv.getFullYear() !== now.getFullYear()) return false;
+        }
+      }
+      return true;
+    });
+
+    // Calculate pagination
+    const totalPages = Math.ceil(filteredPatients.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedPatients = filteredPatients.slice(startIndex, endIndex);
+
     const hasFilters =
       searchQuery ||
       filterBarangay !== "all" ||
@@ -646,7 +672,7 @@ export default function PatientManagement() {
             </button>
           </div>
         )}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Patient Master List</h1>
             <p className="text-gray-500 mt-0.5 text-sm">
@@ -654,17 +680,18 @@ export default function PatientManagement() {
             </p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm">
-              <Download className="w-4 h-4 mr-2" />
-              Export
+            <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
+              <Download className="w-4 h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Export</span>
             </Button>
             <Button
               size="sm"
-              className="bg-gradient-to-r from-health-500 to-health-600"
+              className="bg-gradient-to-r from-health-500 to-health-600 flex-1 sm:flex-none"
               onClick={() => setShowAddDialog(true)}
             >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Patient
+              <Plus className="w-4 h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Add Patient</span>
+              <span className="sm:hidden">Add</span>
             </Button>
           </div>
         </div>
@@ -685,7 +712,7 @@ export default function PatientManagement() {
           {/* Filter chips */}
           <div className="flex flex-wrap gap-2">
             <Select value={filterBarangay} onValueChange={setFilterBarangay}>
-              <SelectTrigger className="h-8 text-xs w-44">
+              <SelectTrigger className="h-8 text-xs w-full sm:w-44">
                 <SelectValue placeholder="All Barangays" />
               </SelectTrigger>
               <SelectContent>
@@ -697,7 +724,7 @@ export default function PatientManagement() {
             </Select>
 
             <Select value={filterAgeGroup} onValueChange={setFilterAgeGroup}>
-              <SelectTrigger className="h-8 text-xs w-36">
+              <SelectTrigger className="h-8 text-xs w-full sm:w-36">
                 <SelectValue placeholder="Age Group" />
               </SelectTrigger>
               <SelectContent>
@@ -710,7 +737,7 @@ export default function PatientManagement() {
             </Select>
 
             <Select value={filterGender} onValueChange={setFilterGender}>
-              <SelectTrigger className="h-8 text-xs w-32">
+              <SelectTrigger className="h-8 text-xs w-full sm:w-32">
                 <SelectValue placeholder="Gender" />
               </SelectTrigger>
               <SelectContent>
@@ -721,7 +748,7 @@ export default function PatientManagement() {
             </Select>
 
             <Select value={filterLastVisit} onValueChange={(v) => setFilterLastVisit(v as LastVisitFilter)}>
-              <SelectTrigger className="h-8 text-xs w-36">
+              <SelectTrigger className="h-8 text-xs w-full sm:w-36">
                 <SelectValue placeholder="Last Visit" />
               </SelectTrigger>
               <SelectContent>
@@ -732,7 +759,7 @@ export default function PatientManagement() {
             </Select>
 
             <Select value={filterServiceType} onValueChange={setFilterServiceType}>
-              <SelectTrigger className="h-8 text-xs w-44">
+              <SelectTrigger className="h-8 text-xs w-full sm:w-44">
                 <SelectValue placeholder="Service Type" />
               </SelectTrigger>
               <SelectContent>
@@ -753,7 +780,7 @@ export default function PatientManagement() {
                   setFilterLastVisit("all");
                   setFilterServiceType("all");
                 }}
-                className="h-8 px-3 text-xs text-gray-500 hover:text-gray-700 flex items-center gap-1 border border-gray-200 rounded-lg hover:bg-gray-50"
+                className="h-8 px-3 text-xs text-gray-500 hover:text-gray-700 flex items-center gap-1 border border-gray-200 rounded-lg hover:bg-gray-50 w-full sm:w-auto justify-center"
               >
                 <X className="w-3 h-3" /> Clear filters
               </button>
@@ -761,8 +788,8 @@ export default function PatientManagement() {
           </div>
         </div>
 
-        {/* Table */}
-        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+        {/* Table - Desktop View */}
+        <div className="hidden lg:block bg-white rounded-2xl border border-slate-200 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -779,7 +806,7 @@ export default function PatientManagement() {
                 </tr>
               </thead>
               <tbody>
-                {filteredPatients.length === 0 ? (
+                {paginatedPatients.length === 0 ? (
                   <tr>
                     <td colSpan={9} className="py-16 text-center text-gray-400">
                       <Users className="w-10 h-10 mx-auto mb-2 opacity-30" />
@@ -787,7 +814,7 @@ export default function PatientManagement() {
                     </td>
                   </tr>
                 ) : (
-                  filteredPatients.map((p) => (
+                  paginatedPatients.map((p) => (
                     <tr
                       key={p.id}
                       className="border-b border-gray-50 hover:bg-health-50 cursor-pointer transition-colors group"
@@ -846,6 +873,177 @@ export default function PatientManagement() {
                 )}
               </tbody>
             </table>
+          </div>
+        </div>
+
+        {/* Card View - Mobile & Tablet */}
+        <div className="lg:hidden space-y-3">
+          {paginatedPatients.length === 0 ? (
+            <div className="bg-white rounded-2xl border border-slate-200 py-16 text-center text-gray-400">
+              <Users className="w-10 h-10 mx-auto mb-2 opacity-30" />
+              <p className="font-medium">No patients match your criteria</p>
+            </div>
+          ) : (
+            paginatedPatients.map((p) => (
+              <div
+                key={p.id}
+                onClick={() => openProfile(p)}
+                className="bg-white rounded-2xl border border-slate-200 p-4 hover:shadow-md transition-all cursor-pointer"
+              >
+                {/* Header */}
+                <div className="flex items-start gap-3 mb-3">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-health-500 to-health-600 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+                    {p.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-gray-900 truncate">{p.name}</h3>
+                    <p className="text-xs text-gray-500 font-mono">{p.id}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                        p.gender === "Male" ? "bg-blue-50 text-blue-700" : "bg-pink-50 text-pink-700"
+                      }`}>
+                        {p.gender}
+                      </span>
+                      <span className="text-xs text-gray-500">{getAge(p.dob)} yrs</span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); openProfile(p); }}
+                    className="p-2 rounded-lg hover:bg-health-50 text-health-600"
+                  >
+                    <Eye className="w-5 h-5" />
+                  </button>
+                </div>
+
+                {/* Details Grid */}
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <p className="text-xs text-gray-400 mb-0.5">Barangay</p>
+                    <p className="font-medium text-gray-900">{p.barangay}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400 mb-0.5">Contact</p>
+                    <p className="font-medium text-gray-900 font-mono text-xs">{p.contactNumber}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400 mb-0.5">Last Visit</p>
+                    <p className="font-medium text-gray-900 text-xs">{formatLastVisit(p.lastVisit)}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400 mb-0.5">Service</p>
+                    <p className="font-medium text-gray-900 text-xs truncate">{p.serviceType}</p>
+                  </div>
+                </div>
+
+                {/* PhilHealth Badge */}
+                {p.philhealthId && (
+                  <div className="mt-3 pt-3 border-t border-gray-100">
+                    <p className="text-xs text-gray-400">PhilHealth: <span className="font-mono text-gray-700">{p.philhealthId}</span></p>
+                  </div>
+                )}
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Pagination Controls */}
+        <div className="bg-white rounded-2xl border border-slate-200 p-4">
+          <div className="flex flex-col gap-4">
+            {/* Pagination Info & Items Per Page */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <p className="text-sm text-gray-600">
+                Showing <span className="font-semibold">{startIndex + 1}</span> to{" "}
+                <span className="font-semibold">{Math.min(endIndex, filteredPatients.length)}</span> of{" "}
+                <span className="font-semibold">{filteredPatients.length}</span> patients
+              </p>
+              <Select
+                value={itemsPerPage.toString()}
+                onValueChange={(v) => {
+                  setItemsPerPage(Number(v));
+                  setCurrentPage(1);
+                }}
+              >
+                <SelectTrigger className="h-8 text-xs w-full sm:w-32">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="5">5 per page</SelectItem>
+                  <SelectItem value="10">10 per page</SelectItem>
+                  <SelectItem value="20">20 per page</SelectItem>
+                  <SelectItem value="50">50 per page</SelectItem>
+                  <SelectItem value="100">100 per page</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Pagination Navigation */}
+            {totalPages > 1 && (
+              <Pagination>
+                <PaginationContent className="flex-wrap justify-center">
+                  <PaginationItem>
+                    <PaginationPrevious
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (currentPage > 1) setCurrentPage(currentPage - 1);
+                      }}
+                      className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+
+                  {/* Page Numbers - Simplified for mobile */}
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                    // On mobile, show fewer page numbers
+                    const isMobile = totalPages > 5;
+                    const showPage = isMobile
+                      ? page === 1 || page === totalPages || page === currentPage
+                      : page === 1 ||
+                        page === totalPages ||
+                        (page >= currentPage - 1 && page <= currentPage + 1);
+
+                    const showEllipsisBefore = page === currentPage - 1 && currentPage > 2 && isMobile;
+                    const showEllipsisAfter = page === currentPage + 1 && currentPage < totalPages - 1 && isMobile;
+
+                    if (showEllipsisBefore || showEllipsisAfter) {
+                      return (
+                        <PaginationItem key={page} className="hidden sm:inline-flex">
+                          <PaginationEllipsis />
+                        </PaginationItem>
+                      );
+                    }
+
+                    if (!showPage) return null;
+
+                    return (
+                      <PaginationItem key={page}>
+                        <PaginationLink
+                          href="#"
+                          isActive={currentPage === page}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCurrentPage(page);
+                          }}
+                          className="cursor-pointer"
+                        >
+                          {page}
+                        </PaginationLink>
+                      </PaginationItem>
+                    );
+                  })}
+
+                  <PaginationItem>
+                    <PaginationNext
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+                      }}
+                      className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            )}
           </div>
         </div>
       </div>
@@ -967,7 +1165,7 @@ export default function PatientManagement() {
           </Link>
           <div className="flex items-center gap-2">
             <span className="text-sm font-medium text-gray-600 hidden sm:inline">{user?.name}</span>
-            <Button variant="outline" size="sm" onClick={logout}>
+            <Button variant="outline" size="sm" onClick={() => { logout(); navigate("/"); }}>
               <LogOut className="w-4 h-4 mr-2" /> Logout
             </Button>
             <button
