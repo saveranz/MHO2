@@ -11,6 +11,12 @@
    * tailwind.config.ts expects the following color variables to be expressed as HSL values.
    * A different format will require also updating the theme in tailwind.config.ts.
   */
+  
+  /* Smooth scrolling for anchor links */
+  html {
+    scroll-behavior: smooth;
+  }
+  
   :root {
     --background: 0 0% 100%;
     --foreground: 210 40% 15%;

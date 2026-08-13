@@ -149,9 +149,9 @@ export default function Header() {
 
           {/* Rounded Navigation Pills */}
           <nav className="hidden md:flex items-center gap-2 bg-cyan-400 rounded-full px-2 py-2">
-            <Link to="/" className="px-6 py-2.5 text-white font-medium hover:bg-white/20 rounded-full transition-all">
+            <a href="#home" className="px-6 py-2.5 text-white font-medium hover:bg-white/20 rounded-full transition-all">
               Home
-            </Link>
+            </a>
             <a href="#about" className="px-6 py-2.5 text-white font-medium hover:bg-white/20 rounded-full transition-all">
               About Us
             </a>
@@ -210,13 +210,13 @@ export default function Header() {
       {/* Mobile nav dropdown */}
       {menuOpen && (
         <div className="md:hidden border-t border-gray-200/50 bg-white/95 backdrop-blur-xl px-4 py-3 flex flex-col gap-1">
-          <Link
-            to="/"
+          <a
+            href="#home"
             onClick={() => setMenuOpen(false)}
             className="px-3 py-2.5 rounded-xl text-foreground font-medium hover:bg-cyan-50 hover:text-cyan-600 transition-colors"
           >
             Home
-          </Link>
+          </a>
           <a
             href="#about"
             onClick={() => setMenuOpen(false)}

@@ -6,6 +6,16 @@ import {
   Heart,
   UserCheck,
   PlayCircle,
+  Syringe,
+  Baby,
+  Microscope,
+  Pill,
+  Award,
+  Clock,
+  Shield,
+  BookOpen,
+  Calendar,
+  TrendingUp,
 } from "lucide-react";
 
 export default function Index() {
@@ -13,8 +23,8 @@ export default function Index() {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       <Header />
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden pt-12 pb-20">
+      {/* Hero Section - Home */}
+      <section id="home" className="relative overflow-hidden pt-12 pb-20">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             {/* Left Content */}
@@ -120,10 +130,163 @@ export default function Index() {
         </div>
       </section>
 
-      {/* All In One Treatment Section */}
-      <section className="py-24 bg-white">
+      {/* About Us Section */}
+      <section id="about" className="py-24 bg-gradient-to-br from-cyan-50 to-white">
         <div className="container mx-auto px-4 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">About MHO Bongabong</h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              Committed to delivering accessible, quality healthcare to every barangay in Bongabong, Oriental Mindoro
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-3 gap-8 mb-16">
+            <div className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all">
+              <div className="w-16 h-16 bg-cyan-100 rounded-2xl flex items-center justify-center mb-6">
+                <Award className="w-8 h-8 text-cyan-600" />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Our Mission</h3>
+              <p className="text-gray-600 leading-relaxed">
+                To provide comprehensive, accessible, and quality primary healthcare services to all residents of Bongabong, promoting health and wellness through community-based programs and professional medical care.
+              </p>
+            </div>
+
+            <div className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all">
+              <div className="w-16 h-16 bg-cyan-100 rounded-2xl flex items-center justify-center mb-6">
+                <Shield className="w-8 h-8 text-cyan-600" />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Our Vision</h3>
+              <p className="text-gray-600 leading-relaxed">
+                A healthier Bongabong community where every resident has access to quality healthcare services, leading to improved quality of life and reduced health disparities across all barangays.
+              </p>
+            </div>
+
+            <div className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all">
+              <div className="w-16 h-16 bg-cyan-100 rounded-2xl flex items-center justify-center mb-6">
+                <Heart className="w-8 h-8 text-cyan-600" />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Our Values</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Compassion, Excellence, Integrity, and Community. We believe in treating every patient with dignity and respect while maintaining the highest standards of medical care.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-4 gap-6">
+            <div className="text-center bg-white rounded-2xl p-6 shadow-md">
+              <p className="text-5xl font-bold text-cyan-600 mb-2">20</p>
+              <p className="text-gray-600 font-medium">Barangays Served</p>
+            </div>
+            <div className="text-center bg-white rounded-2xl p-6 shadow-md">
+              <p className="text-5xl font-bold text-cyan-600 mb-2">15K+</p>
+              <p className="text-gray-600 font-medium">Patients Annually</p>
+            </div>
+            <div className="text-center bg-white rounded-2xl p-6 shadow-md">
+              <p className="text-5xl font-bold text-cyan-600 mb-2">21+</p>
+              <p className="text-gray-600 font-medium">Healthcare Staff</p>
+            </div>
+            <div className="text-center bg-white rounded-2xl p-6 shadow-md">
+              <p className="text-5xl font-bold text-cyan-600 mb-2">24/7</p>
+              <p className="text-gray-600 font-medium">Emergency Services</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Services Section */}
+      <section id="services" className="py-24 bg-white">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Our Services</h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              Comprehensive healthcare services designed to meet the needs of our community
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+            <div className="bg-gradient-to-br from-cyan-50 to-white rounded-3xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all">
+              <div className="w-16 h-16 bg-cyan-100 rounded-2xl flex items-center justify-center mb-6">
+                <Stethoscope className="w-8 h-8 text-cyan-600" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">OPD Consultation</h3>
+              <p className="text-gray-600 leading-relaxed">
+                General health consultations, medical examinations, and treatment for common illnesses.
+              </p>
+            </div>
+
+            <div className="bg-gradient-to-br from-pink-50 to-white rounded-3xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all">
+              <div className="w-16 h-16 bg-pink-100 rounded-2xl flex items-center justify-center mb-6">
+                <Baby className="w-8 h-8 text-pink-600" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Maternal Care</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Prenatal check-ups, safe delivery services, postnatal care, and family planning.
+              </p>
+            </div>
+
+            <div className="bg-gradient-to-br from-green-50 to-white rounded-3xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all">
+              <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mb-6">
+                <Syringe className="w-8 h-8 text-green-600" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Immunization</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Complete vaccination programs for infants, children, and adults following DOH guidelines.
+              </p>
+            </div>
+
+            <div className="bg-gradient-to-br from-purple-50 to-white rounded-3xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all">
+              <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mb-6">
+                <Pill className="w-8 h-8 text-purple-600" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">TB-DOTS</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Tuberculosis detection, treatment, and monitoring using the DOTS strategy.
+              </p>
+            </div>
+
+            <div className="bg-gradient-to-br from-blue-50 to-white rounded-3xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all">
+              <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mb-6">
+                <Microscope className="w-8 h-8 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Laboratory</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Basic diagnostic tests including blood tests, urinalysis, and other laboratory services.
+              </p>
+            </div>
+
+            <div className="bg-gradient-to-br from-orange-50 to-white rounded-3xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all">
+              <div className="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center mb-6">
+                <Activity className="w-8 h-8 text-orange-600" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Pharmacy</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Essential medicines and medical supplies available at affordable prices.
+              </p>
+            </div>
+
+            <div className="bg-gradient-to-br from-teal-50 to-white rounded-3xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all">
+              <div className="w-16 h-16 bg-teal-100 rounded-2xl flex items-center justify-center mb-6">
+                <Users className="w-8 h-8 text-teal-600" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Health Education</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Community seminars on nutrition, disease prevention, and healthy lifestyle.
+              </p>
+            </div>
+
+            <div className="bg-gradient-to-br from-red-50 to-white rounded-3xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all">
+              <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mb-6">
+                <Heart className="w-8 h-8 text-red-600" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Emergency Care</h3>
+              <p className="text-gray-600 leading-relaxed">
+                24/7 emergency response and first aid services for urgent medical needs.
+              </p>
+            </div>
+          </div>
+
+          {/* All In One Treatment Section - Moved Inside Services */}
+          <div className="grid lg:grid-cols-2 gap-16 items-center mt-24">
             {/* Left - Images */}
             <div className="relative">
               <div className="grid grid-cols-2 gap-4">
@@ -186,6 +349,156 @@ export default function Index() {
                   <h3 className="font-bold text-gray-900 text-lg">Community Programs</h3>
                   <p className="text-sm text-gray-600 leading-relaxed">Immunization drives, health education, and barangay outreach programs</p>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Doctors Section */}
+      <section id="doctors" className="py-24 bg-gradient-to-br from-gray-50 to-white">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Our Medical Team</h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              Dedicated healthcare professionals committed to serving the Bongabong community
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {/* Doctor 1 */}
+            <div className="bg-white rounded-3xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all group">
+              <div className="w-full aspect-square bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-2xl mb-6 flex items-center justify-center">
+                <Stethoscope className="w-24 h-24 text-white/40" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Dr. Maria Santos</h3>
+              <p className="text-cyan-600 font-medium mb-3">Municipal Health Officer</p>
+              <p className="text-sm text-gray-600 mb-4">General Practice & Public Health</p>
+              <div className="flex items-center gap-2 text-sm text-gray-500">
+                <Clock className="w-4 h-4" />
+                <span>15+ years experience</span>
+              </div>
+            </div>
+
+            {/* Doctor 2 */}
+            <div className="bg-white rounded-3xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all group">
+              <div className="w-full aspect-square bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl mb-6 flex items-center justify-center">
+                <Heart className="w-24 h-24 text-white/40" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Dr. Carlo Buenaventura</h3>
+              <p className="text-cyan-600 font-medium mb-3">Medical Officer</p>
+              <p className="text-sm text-gray-600 mb-4">Family Medicine</p>
+              <div className="flex items-center gap-2 text-sm text-gray-500">
+                <Clock className="w-4 h-4" />
+                <span>10+ years experience</span>
+              </div>
+            </div>
+
+            {/* Nurse 1 */}
+            <div className="bg-white rounded-3xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all group">
+              <div className="w-full aspect-square bg-gradient-to-br from-pink-400 to-pink-600 rounded-2xl mb-6 flex items-center justify-center">
+                <UserCheck className="w-24 h-24 text-white/40" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Elena Cruz</h3>
+              <p className="text-cyan-600 font-medium mb-3">Senior Nurse</p>
+              <p className="text-sm text-gray-600 mb-4">Patient Care & Emergency Response</p>
+              <div className="flex items-center gap-2 text-sm text-gray-500">
+                <Clock className="w-4 h-4" />
+                <span>12+ years experience</span>
+              </div>
+            </div>
+
+            {/* Midwife */}
+            <div className="bg-white rounded-3xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all group">
+              <div className="w-full aspect-square bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl mb-6 flex items-center justify-center">
+                <Baby className="w-24 h-24 text-white/40" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Ana Lopez</h3>
+              <p className="text-cyan-600 font-medium mb-3">Chief Midwife</p>
+              <p className="text-sm text-gray-600 mb-4">Maternal & Child Health</p>
+              <div className="flex items-center gap-2 text-sm text-gray-500">
+                <Clock className="w-4 h-4" />
+                <span>8+ years experience</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Blog Section */}
+      <section id="blog" className="py-24 bg-white">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Health News & Updates</h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              Stay informed with the latest health programs, announcements, and wellness tips
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Blog Post 1 */}
+            <div className="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all group">
+              <div className="h-48 bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center">
+                <Syringe className="w-20 h-20 text-white/40" />
+              </div>
+              <div className="p-6">
+                <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
+                  <Calendar className="w-4 h-4" />
+                  <span>January 15, 2025</span>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-cyan-600 transition-colors">
+                  2025 Immunization Schedule Released
+                </h3>
+                <p className="text-gray-600 mb-4 leading-relaxed">
+                  MHO Bongabong announces the immunization schedule for all barangays. Free vaccines available for all children and eligible adults.
+                </p>
+                <a href="#" className="inline-flex items-center gap-2 text-cyan-600 font-semibold hover:gap-3 transition-all">
+                  Read More <BookOpen className="w-4 h-4" />
+                </a>
+              </div>
+            </div>
+
+            {/* Blog Post 2 */}
+            <div className="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all group">
+              <div className="h-48 bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
+                <Heart className="w-20 h-20 text-white/40" />
+              </div>
+              <div className="p-6">
+                <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
+                  <Calendar className="w-4 h-4" />
+                  <span>January 10, 2025</span>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-cyan-600 transition-colors">
+                  Maternal Health Program Expansion
+                </h3>
+                <p className="text-gray-600 mb-4 leading-relaxed">
+                  New prenatal care services now available in remote barangays. Free consultations and nutritional support for expecting mothers.
+                </p>
+                <a href="#" className="inline-flex items-center gap-2 text-cyan-600 font-semibold hover:gap-3 transition-all">
+                  Read More <BookOpen className="w-4 h-4" />
+                </a>
+              </div>
+            </div>
+
+            {/* Blog Post 3 */}
+            <div className="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all group">
+              <div className="h-48 bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
+                <TrendingUp className="w-20 h-20 text-white/40" />
+              </div>
+              <div className="p-6">
+                <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
+                  <Calendar className="w-4 h-4" />
+                  <span>January 5, 2025</span>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-cyan-600 transition-colors">
+                  Health Statistics: 2024 Year in Review
+                </h3>
+                <p className="text-gray-600 mb-4 leading-relaxed">
+                  MHO Bongabong reports significant improvements in community health indicators. See the progress we've made together.
+                </p>
+                <a href="#" className="inline-flex items-center gap-2 text-cyan-600 font-semibold hover:gap-3 transition-all">
+                  Read More <BookOpen className="w-4 h-4" />
+                </a>
               </div>
             </div>
           </div>
