@@ -14,9 +14,11 @@ export interface User {
 interface AuthContextType {
   user: User | null;
   isLoggedIn: boolean;
-  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: string; needsVerification?: boolean }>;
   logout: () => void;
   loading: boolean;
+  sendPasswordReset: (email: string) => Promise<{ success: boolean; error?: string }>;
+  sendVerificationEmail: (email: string) => Promise<{ success: boolean; error?: string }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -70,6 +72,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem("user");
   };
 
+  const sendPasswordReset = async (email: string) => {
+    try {
+      // In a real app, this would call Firebase Auth's sendPasswordResetEmail
+      // For demo purposes, we'll accept any email format and simulate sending
+      
+      // Basic email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return { success: false, error: "Please enter a valid email address" };
+      }
+
+      // Simulate sending email (in production, this would be handled by Firebase)
+      console.log(`Password reset email sent to: ${email}`);
+      
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: "Failed to send password reset email" };
+    }
+  };
+
+  const sendVerificationEmail = async (email: string) => {
+    try {
+      // In a real app, this would call Firebase Auth's sendEmailVerification
+      // For now, we'll simulate the process
+      console.log(`Verification email sent to: ${email}`);
+      
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: "Failed to send verification email" };
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -78,6 +112,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         login,
         logout,
         loading,
+        sendPasswordReset,
+        sendVerificationEmail,
       }}
     >
       {children}

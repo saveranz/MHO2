@@ -29,9 +29,6 @@ export default function Index() {
               </div>
 
               <div className="flex flex-wrap gap-4 items-center">
-                <button className="px-8 py-4 bg-gray-900 text-white font-semibold rounded-full hover:bg-gray-800 transition-all hover:scale-105 shadow-lg">
-                  Book Now
-                </button>
                 <button className="flex items-center gap-3 text-gray-700 font-semibold hover:text-cyan-600 transition-colors">
                   <div className="w-14 h-14 bg-cyan-400 rounded-full flex items-center justify-center shadow-lg">
                     <PlayCircle className="w-7 h-7 text-white fill-white" />

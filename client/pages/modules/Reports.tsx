@@ -108,6 +108,7 @@ export default function Reports() {
   const navigate = useNavigate();
   const { user, logout, isLoggedIn, loading } = useAuth();
   const [currentView, setCurrentView] = useState<SidebarView>("dashboard");
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [selectedPeriod, setSelectedPeriod] = useState("month");
@@ -964,7 +965,7 @@ export default function Reports() {
 
             <div className="flex items-center gap-4">
               <span className="text-sm font-medium text-gray-600">{user?.name}</span>
-              <Button variant="outline" size="sm" onClick={() => { logout(); navigate("/"); }} className="hover:bg-health-50">
+              <Button variant="outline" size="sm" onClick={() => setShowLogoutDialog(true)} className="hover:bg-health-50">
                 <LogOut className="w-4 h-4 mr-2" />
                 Logout
               </Button>
@@ -1072,6 +1073,33 @@ export default function Reports() {
           <main className="flex-1 overflow-y-auto p-6">{renderContent()}</main>
         </div>
       </div>
+
+      {/* Logout Confirmation Dialog */}
+      <Dialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Confirm Logout</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to logout? You will need to sign in again to access the system.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex gap-2 sm:gap-0">
+            <Button variant="outline" onClick={() => setShowLogoutDialog(false)}>
+              Cancel
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={() => { 
+                logout(); 
+                navigate("/"); 
+              }}
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              Logout
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

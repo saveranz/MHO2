@@ -555,9 +555,38 @@ export default function DutySchedule() {
   }, [weekDates]);
 
   const handlePublish = useCallback(() => {
+    // Create notification for each staff member with assignments
+    const staffNotifications: Record<string, any[]> = {};
+    
+    weekAssignments.forEach(assignment => {
+      if (!staffNotifications[assignment.staffId]) {
+        staffNotifications[assignment.staffId] = [];
+      }
+      staffNotifications[assignment.staffId].push({
+        date: assignment.date,
+        shift: assignment.shiftType,
+      });
+    });
+
+    // Save notifications to localStorage
+    const existingNotifications = JSON.parse(localStorage.getItem('staffNotifications') || '[]');
+    const newNotification = {
+      id: Date.now().toString(),
+      type: 'schedule_published',
+      title: 'New Schedule Published',
+      message: `Your duty schedule for ${weekLabel} has been published.`,
+      weekLabel,
+      timestamp: new Date().toISOString(),
+      read: false,
+      staffAssignments: staffNotifications,
+    };
+    
+    existingNotifications.push(newNotification);
+    localStorage.setItem('staffNotifications', JSON.stringify(existingNotifications));
+    
     setShowPublish(false);
     setPublished(true);
-  }, []);
+  }, [weekAssignments, weekLabel]);
 
   function goToday() {
     if (viewMode === "week") {

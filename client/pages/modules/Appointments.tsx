@@ -166,6 +166,7 @@ export default function Appointments() {
   const { user, logout, isLoggedIn, loading } = useAuth();
   const [currentView, setCurrentView] = useState<SidebarView>("calendar");
   const [calendarView, setCalendarView] = useState<CalendarView>("week");
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedDoctor, setSelectedDoctor] = useState<string>("all");
   const [showAddDialog, setShowAddDialog] = useState(false);
@@ -808,7 +809,7 @@ export default function Appointments() {
 
             <div className="flex items-center gap-4">
               <span className="text-sm font-medium text-gray-600">{user?.name}</span>
-              <Button variant="outline" size="sm" onClick={() => { logout(); navigate("/"); }} className="hover:bg-health-50">
+              <Button variant="outline" size="sm" onClick={() => setShowLogoutDialog(true)} className="hover:bg-health-50">
                 <LogOut className="w-4 h-4 mr-2" />
                 Logout
               </Button>
@@ -1006,6 +1007,33 @@ export default function Appointments() {
             </Button>
             <Button className="bg-gradient-to-r from-health-500 to-health-600">
               Schedule Appointment
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Logout Confirmation Dialog */}
+      <Dialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Confirm Logout</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to logout? You will need to sign in again to access the system.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex gap-2 sm:gap-0">
+            <Button variant="outline" onClick={() => setShowLogoutDialog(false)}>
+              Cancel
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={() => { 
+                logout(); 
+                navigate("/"); 
+              }}
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              Logout
             </Button>
           </DialogFooter>
         </DialogContent>

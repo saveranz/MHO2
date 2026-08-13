@@ -1,20 +1,13 @@
 ﻿import { useState, useEffect } from "react";
-import * as React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useLocalStorage } from "@/hooks/use-local-storage";
 import {
   Users,
   Search,
   Plus,
   Download,
-  QrCode,
-  FileText,
-  Calendar,
-  User,
-  Phone,
-  MapPin,
   Edit,
   Eye,
-  ArrowLeft,
   Home,
   Activity,
   LogOut,
@@ -24,6 +17,7 @@ import {
   Merge,
   UserCheck,
   Shield,
+  Calendar,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -69,7 +63,7 @@ type ServiceType =
 
 type AgeGroup = "Child" | "Teen" | "Adult" | "Senior";
 type LastVisitFilter = "all" | "this-month" | "this-year";
-type SidebarView = "dashboard" | "list" | "qr" | "merge";
+type SidebarView = "dashboard" | "list" | "merge";
 
 interface Patient {
   id: string;
@@ -91,10 +85,10 @@ interface Patient {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const BONGABONG_BARANGAYS = [
-  "Aplaya", "Bagong Silang", "Balansay", "Bukal", "Calatunan",
-  "Hagan", "Labasan", "Libertad", "Mabini", "Makahawang",
-  "Paitan", "Poblacion", "Sagana", "San Isidro", "Sta. Cruz",
-  "Tagumpay", "Wawa",
+  "Aplaya", "Bagong Silang", "Balansay", "Batangan", "Bukal", 
+  "Calatunan", "Formon", "Hagan", "Ipil", "Labasan", "Libertad", 
+  "Mabini", "Makahawang", "Paitan", "Poblacion", "Sagana", 
+  "San Isidro", "Sta. Cruz", "Tagumpay", "Wawa",
 ];
 
 const SERVICE_TYPES: ServiceType[] = [
@@ -106,143 +100,164 @@ const SERVICE_TYPES: ServiceType[] = [
 const INITIAL_PATIENTS: Patient[] = [
   {
     id: "P001", name: "Maria Santos", photo: null, dob: "1985-03-15", gender: "Female",
-    barangay: "Poblacion", address: "Blk 2 Lot 5, Poblacion, Bongabong, Oriental Mindoro",
+    barangay: "Poblacion", address: "Blk 2 Lot 5, Brgy. Poblacion, Bongabong, Oriental Mindoro",
     contactNumber: "0917-234-5678", philhealthId: "12-345678901-2",
     lastVisit: "2025-07-10", totalVisits: 12, bloodGroup: "A+",
     allergies: "Penicillin", serviceType: "OPD Consultation", email: "maria.santos@gmail.com",
   },
   {
     id: "P002", name: "Juan Dela Cruz", photo: null, dob: "1972-08-22", gender: "Male",
-    barangay: "Hagan", address: "Purok 3, Hagan, Bongabong, Oriental Mindoro",
+    barangay: "Hagan", address: "Purok 3, Brgy. Hagan, Bongabong, Oriental Mindoro",
     contactNumber: "0921-567-8901", philhealthId: "12-456789012-3",
     lastVisit: "2025-06-28", totalVisits: 8, bloodGroup: "O+",
     allergies: "None", serviceType: "TB-DOTS", email: "jdelacruz@gmail.com",
   },
   {
     id: "P003", name: "Ana Reyes", photo: null, dob: "1998-11-03", gender: "Female",
-    barangay: "Aplaya", address: "Sitio Dalampasigan, Aplaya, Bongabong, Oriental Mindoro",
+    barangay: "Aplaya", address: "Sitio Dalampasigan, Brgy. Aplaya, Bongabong, Oriental Mindoro",
     contactNumber: "0932-678-9012", philhealthId: null,
     lastVisit: "2025-07-05", totalVisits: 5, bloodGroup: "B+",
     allergies: "Sulfa", serviceType: "Maternal Care", email: "ana.reyes@yahoo.com",
   },
   {
     id: "P004", name: "Roberto Magpayo", photo: null, dob: "1960-05-17", gender: "Male",
-    barangay: "Labasan", address: "Purok 1, Labasan, Bongabong, Oriental Mindoro",
+    barangay: "Labasan", address: "Purok 1, Brgy. Labasan, Bongabong, Oriental Mindoro",
     contactNumber: "0908-789-0123", philhealthId: "12-567890123-4",
     lastVisit: "2025-05-20", totalVisits: 20, bloodGroup: "AB-",
     allergies: "Aspirin", serviceType: "OPD Consultation",
   },
   {
     id: "P005", name: "Lourdes Pimentel", photo: null, dob: "1940-12-01", gender: "Female",
-    barangay: "Mabini", address: "Purok 4, Mabini, Bongabong, Oriental Mindoro",
+    barangay: "Mabini", address: "Purok 4, Brgy. Mabini, Bongabong, Oriental Mindoro",
     contactNumber: "0945-890-1234", philhealthId: "12-678901234-5",
     lastVisit: "2025-07-12", totalVisits: 35, bloodGroup: "A-",
     allergies: "None", serviceType: "OPD Consultation",
   },
   {
     id: "P006", name: "Carlo Vidal", photo: null, dob: "2015-03-09", gender: "Male",
-    barangay: "Sta. Cruz", address: "Purok 2, Sta. Cruz, Bongabong, Oriental Mindoro",
+    barangay: "Sta. Cruz", address: "Purok 2, Brgy. Sta. Cruz, Bongabong, Oriental Mindoro",
     contactNumber: "0912-901-2345", philhealthId: "12-789012345-6",
     lastVisit: "2025-07-01", totalVisits: 3, bloodGroup: "O-",
     allergies: "None", serviceType: "Immunization",
   },
   {
     id: "P007", name: "Elena Buenaventura", photo: null, dob: "1993-07-25", gender: "Female",
-    barangay: "Libertad", address: "Sitio Bagong Palayan, Libertad, Bongabong, Oriental Mindoro",
+    barangay: "Libertad", address: "Sitio Bagong Palayan, Brgy. Libertad, Bongabong, Oriental Mindoro",
     contactNumber: "0956-012-3456", philhealthId: "12-890123456-7",
     lastVisit: "2025-06-15", totalVisits: 9, bloodGroup: "B-",
     allergies: "Codeine", serviceType: "Family Planning",
   },
   {
     id: "P008", name: "Danilo Pajarillo", photo: null, dob: "1955-09-30", gender: "Male",
-    barangay: "Sagana", address: "Purok 5, Sagana, Bongabong, Oriental Mindoro",
+    barangay: "Sagana", address: "Purok 5, Brgy. Sagana, Bongabong, Oriental Mindoro",
     contactNumber: "0977-123-4567", philhealthId: "12-901234567-8",
     lastVisit: "2025-04-18", totalVisits: 14, bloodGroup: "A+",
     allergies: "None", serviceType: "OPD Consultation",
   },
   {
     id: "P009", name: "Imelda Soledad", photo: null, dob: "1988-02-14", gender: "Female",
-    barangay: "Makahawang", address: "Purok 3, Makahawang, Bongabong, Oriental Mindoro",
+    barangay: "Makahawang", address: "Purok 3, Brgy. Makahawang, Bongabong, Oriental Mindoro",
     contactNumber: "0906-234-5678", philhealthId: null,
     lastVisit: "2025-07-08", totalVisits: 6, bloodGroup: "O+",
     allergies: "None", serviceType: "Laboratory",
   },
   {
     id: "P010", name: "Fernando Dimapilis", photo: null, dob: "1979-06-20", gender: "Male",
-    barangay: "Paitan", address: "Sitio Ilaya, Paitan, Bongabong, Oriental Mindoro",
+    barangay: "Paitan", address: "Sitio Ilaya, Brgy. Paitan, Bongabong, Oriental Mindoro",
     contactNumber: "0929-345-6789", philhealthId: "12-012345678-9",
     lastVisit: "2025-03-30", totalVisits: 4, bloodGroup: "AB+",
     allergies: "Ibuprofen", serviceType: "Dental",
   },
   {
     id: "P011", name: "Rosario Cabungcal", photo: null, dob: "2018-09-05", gender: "Female",
-    barangay: "Bukal", address: "Purok 1, Bukal, Bongabong, Oriental Mindoro",
+    barangay: "Bukal", address: "Purok 1, Brgy. Bukal, Bongabong, Oriental Mindoro",
     contactNumber: "0961-456-7890", philhealthId: "12-123456790-1",
     lastVisit: "2025-07-14", totalVisits: 7, bloodGroup: "A+",
     allergies: "None", serviceType: "Immunization",
   },
   {
     id: "P012", name: "Pedro Alcantara", photo: null, dob: "1945-04-11", gender: "Male",
-    barangay: "Calatunan", address: "Sitio Cana-an, Calatunan, Bongabong, Oriental Mindoro",
+    barangay: "Calatunan", address: "Sitio Cana-an, Brgy. Calatunan, Bongabong, Oriental Mindoro",
     contactNumber: "0918-567-8901", philhealthId: "12-234567891-2",
     lastVisit: "2025-06-22", totalVisits: 28, bloodGroup: "B+",
     allergies: "None", serviceType: "OPD Consultation",
   },
   {
     id: "P013", name: "Natividad Gozum", photo: null, dob: "2000-12-25", gender: "Female",
-    barangay: "Bagong Silang", address: "Purok 2, Bagong Silang, Bongabong, Oriental Mindoro",
+    barangay: "Bagong Silang", address: "Purok 2, Brgy. Bagong Silang, Bongabong, Oriental Mindoro",
     contactNumber: "0943-678-9012", philhealthId: null,
     lastVisit: "2025-07-11", totalVisits: 2, bloodGroup: "O+",
     allergies: "None", serviceType: "Maternal Care",
   },
   {
     id: "P014", name: "Augusto Reyes", photo: null, dob: "1968-01-08", gender: "Male",
-    barangay: "Balansay", address: "Purok 6, Balansay, Bongabong, Oriental Mindoro",
+    barangay: "Balansay", address: "Purok 6, Brgy. Balansay, Bongabong, Oriental Mindoro",
     contactNumber: "0974-789-0123", philhealthId: "12-345678902-3",
     lastVisit: "2025-05-05", totalVisits: 11, bloodGroup: "A-",
     allergies: "Tetracycline", serviceType: "TB-DOTS",
   },
   {
     id: "P015", name: "Concepcion Villareal", photo: null, dob: "1991-10-19", gender: "Female",
-    barangay: "Tagumpay", address: "Sitio Masipag, Tagumpay, Bongabong, Oriental Mindoro",
+    barangay: "Tagumpay", address: "Sitio Masipag, Brgy. Tagumpay, Bongabong, Oriental Mindoro",
     contactNumber: "0903-890-1234", philhealthId: "12-456789013-4",
     lastVisit: "2025-07-09", totalVisits: 16, bloodGroup: "AB+",
     allergies: "None", serviceType: "Family Planning",
   },
   {
     id: "P016", name: "Ernesto Marquez", photo: null, dob: "1983-05-28", gender: "Male",
-    barangay: "Hagan", address: "Purok 4, Hagan, Bongabong, Oriental Mindoro",
+    barangay: "Hagan", address: "Purok 4, Brgy. Hagan, Bongabong, Oriental Mindoro",
     contactNumber: "0935-901-2345", philhealthId: "12-567890124-5",
     lastVisit: "2025-06-30", totalVisits: 7, bloodGroup: "B+",
     allergies: "None", serviceType: "Laboratory",
   },
   {
     id: "P017", name: "Josefina Bautista", photo: null, dob: "2013-07-14", gender: "Female",
-    barangay: "San Isidro", address: "Purok 3, San Isidro, Bongabong, Oriental Mindoro",
+    barangay: "San Isidro", address: "Purok 3, Brgy. San Isidro, Bongabong, Oriental Mindoro",
     contactNumber: "0947-012-3456", philhealthId: "12-678901235-6",
     lastVisit: "2025-04-25", totalVisits: 4, bloodGroup: "O-",
     allergies: "None", serviceType: "Immunization",
   },
   {
     id: "P018", name: "Renato Domingo", photo: null, dob: "1948-03-02", gender: "Male",
-    barangay: "Wawa", address: "Sitio Bayanan, Wawa, Bongabong, Oriental Mindoro",
+    barangay: "Wawa", address: "Sitio Bayanan, Brgy. Wawa, Bongabong, Oriental Mindoro",
     contactNumber: "0925-123-4567", philhealthId: "12-789012346-7",
     lastVisit: "2025-07-13", totalVisits: 22, bloodGroup: "A+",
     allergies: "NSAID", serviceType: "OPD Consultation",
   },
   {
     id: "P019", name: "Teresa Evangelista", photo: null, dob: "1995-08-17", gender: "Female",
-    barangay: "Aplaya", address: "Purok 5, Aplaya, Bongabong, Oriental Mindoro",
+    barangay: "Aplaya", address: "Purok 5, Brgy. Aplaya, Bongabong, Oriental Mindoro",
     contactNumber: "0966-234-5678", philhealthId: null,
     lastVisit: "2025-07-15", totalVisits: 3, bloodGroup: "B+",
     allergies: "None", serviceType: "Dental",
   },
   {
     id: "P020", name: "Rodrigo Santillan", photo: null, dob: "1962-11-30", gender: "Male",
-    barangay: "Mabini", address: "Purok 2, Mabini, Bongabong, Oriental Mindoro",
+    barangay: "Mabini", address: "Purok 2, Brgy. Mabini, Bongabong, Oriental Mindoro",
     contactNumber: "0978-345-6789", philhealthId: "12-890123457-8",
     lastVisit: "2025-06-10", totalVisits: 18, bloodGroup: "O+",
     allergies: "Amoxicillin", serviceType: "OPD Consultation",
+  },
+  {
+    id: "P021", name: "Gregorio Malabanan", photo: null, dob: "1987-04-22", gender: "Male",
+    barangay: "Formon", address: "Sitio Kamagong, Brgy. Formon, Bongabong, Oriental Mindoro",
+    contactNumber: "0915-789-0123", philhealthId: "12-234567892-3",
+    lastVisit: "2025-07-07", totalVisits: 9, bloodGroup: "B+",
+    allergies: "None", serviceType: "OPD Consultation", email: "greg.malabanan@gmail.com",
+  },
+  {
+    id: "P022", name: "Carmen Villanueva", photo: null, dob: "1975-09-18", gender: "Female",
+    barangay: "Batangan", address: "Purok 3, Brgy. Batangan, Bongabong, Oriental Mindoro",
+    contactNumber: "0927-456-7890", philhealthId: "12-345678903-4",
+    lastVisit: "2025-06-20", totalVisits: 15, bloodGroup: "A+",
+    allergies: "Sulfa", serviceType: "Laboratory",
+  },
+  {
+    id: "P023", name: "Ricardo Torres", photo: null, dob: "1992-11-08", gender: "Male",
+    barangay: "Ipil", address: "Purok 1, Brgy. Ipil, Bongabong, Oriental Mindoro",
+    contactNumber: "0933-567-8901", philhealthId: "12-456789014-5",
+    lastVisit: "2025-07-14", totalVisits: 6, bloodGroup: "O+",
+    allergies: "None", serviceType: "Dental",
   },
 ];
 
@@ -318,10 +333,11 @@ export default function PatientManagement() {
   const navigate = useNavigate();
   const [currentView, setCurrentView] = useState<SidebarView>("dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [patients, setPatients] = useState<Patient[]>(INITIAL_PATIENTS);
+  const [patients, setPatients] = useLocalStorage<Patient[]>("mho_patients", INITIAL_PATIENTS);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
   const [form, setForm] = useState<PatientForm>(EMPTY_FORM);
   const [formErrors, setFormErrors] = useState<string[]>([]);
   const [successId, setSuccessId] = useState<string | null>(null);
@@ -337,6 +353,9 @@ export default function PatientManagement() {
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  
+  // Logout confirmation
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
 
   // Auth protection - Check if user is logged in
   useEffect(() => {
@@ -351,6 +370,11 @@ export default function PatientManagement() {
       navigate("/staff");
     }
   }, [user, navigate]);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, filterBarangay, filterAgeGroup, filterGender, filterLastVisit, filterServiceType]);
 
   // Show nothing while loading
   if (loading || !isLoggedIn) return null;
@@ -406,19 +430,122 @@ export default function PatientManagement() {
     setCurrentView("list");
   }
 
-  // Reset to page 1 when filters change
-  React.useEffect(() => {
-    setCurrentPage(1);
-  }, [searchQuery, filterBarangay, filterAgeGroup, filterGender, filterLastVisit, filterServiceType]);
-
   function openProfile(patient: Patient) {
     setSelectedPatient(patient);
     setShowProfileModal(true);
   }
 
-  function handleGenerateQR(patient: Patient) {
+  function handleEditPatient() {
+    if (!selectedPatient) return;
+    
+    const errors: string[] = [];
+    if (!form.name.trim()) errors.push("Full name is required.");
+    if (!form.dob) errors.push("Date of birth is required.");
+    if (!form.gender) errors.push("Gender is required.");
+    if (!form.barangay) errors.push("Barangay is required.");
+    if (!form.contactNumber.trim()) errors.push("Contact number is required.");
+    if (!form.serviceType) errors.push("Service type is required.");
+    if (errors.length) {
+      setFormErrors(errors);
+      return;
+    }
+
+    const updatedPatient: Patient = {
+      ...selectedPatient,
+      name: form.name.trim(),
+      dob: form.dob,
+      gender: form.gender as "Male" | "Female",
+      barangay: form.barangay,
+      address: form.address.trim() || `${form.barangay}, Bongabong, Oriental Mindoro`,
+      contactNumber: form.contactNumber.trim(),
+      philhealthId: form.philhealthId.trim() || null,
+      bloodGroup: form.bloodGroup.trim() || "Unknown",
+      allergies: form.allergies.trim() || "None",
+      serviceType: form.serviceType as ServiceType,
+      email: form.email.trim() || undefined,
+    };
+
+    setPatients((prev) => prev.map((p) => (p.id === selectedPatient.id ? updatedPatient : p)));
+    setSelectedPatient(updatedPatient);
+    setForm(EMPTY_FORM);
+    setFormErrors([]);
+    setShowEditDialog(false);
+    setShowProfileModal(true);
+  }
+
+  function openEditDialog(patient: Patient) {
     setSelectedPatient(patient);
-    setCurrentView("qr");
+    setForm({
+      name: patient.name,
+      dob: patient.dob,
+      gender: patient.gender,
+      barangay: patient.barangay,
+      contactNumber: patient.contactNumber,
+      philhealthId: patient.philhealthId || "",
+      bloodGroup: patient.bloodGroup,
+      allergies: patient.allergies,
+      serviceType: patient.serviceType,
+      email: patient.email || "",
+      address: patient.address,
+    });
+    setShowProfileModal(false);
+    setShowEditDialog(true);
+  }
+
+  function handleExportPatients() {
+    // Add UTF-8 BOM for Excel compatibility
+    let csvContent = '\uFEFF';
+    
+    // Add headers
+    csvContent += '"Patient ID","Full Name","Date of Birth","Age","Gender","Barangay","Address","Contact Number","PhilHealth ID","Email","Blood Group","Allergies","Service Type","Last Visit","Total Visits"\n';
+    
+    // Helper to format dates for Excel
+    const formatDateForCSV = (dateStr: string): string => {
+      const date = new Date(dateStr);
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const year = date.getFullYear();
+      return `${month}/${day}/${year}`;
+    };
+    
+    // Add data rows
+    patients.forEach((patient) => {
+      const age = getAge(patient.dob);
+      const row = [
+        patient.id,
+        patient.name,
+        formatDateForCSV(patient.dob),
+        age.toString(),
+        patient.gender,
+        patient.barangay,
+        patient.address,
+        patient.contactNumber,
+        patient.philhealthId || 'N/A',
+        patient.email || 'N/A',
+        patient.bloodGroup,
+        patient.allergies,
+        patient.serviceType,
+        formatDateForCSV(patient.lastVisit),
+        patient.totalVisits.toString()
+      ].map(field => {
+        // Escape quotes and wrap in quotes for CSV
+        const escaped = String(field).replace(/"/g, '""');
+        return `"${escaped}"`;
+      });
+      
+      csvContent += row.join(',') + '\n';
+    });
+    
+    // Create blob and download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Patient-Master-List-${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   }
 
   // ─── Dashboard ─────────────────────────────────────────────────────────────
@@ -680,7 +807,7 @@ export default function PatientManagement() {
             </p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
+            <Button variant="outline" size="sm" className="flex-1 sm:flex-none" onClick={handleExportPatients}>
               <Download className="w-4 h-4 sm:mr-2" />
               <span className="hidden sm:inline">Export</span>
             </Button>
@@ -1050,75 +1177,6 @@ export default function PatientManagement() {
     );
   }
 
-  // ─── QR Card View ──────────────────────────────────────────────────────────
-  function renderQR() {
-    if (!selectedPatient) return null;
-    return (
-      <div className="space-y-6">
-        <Button variant="outline" onClick={() => setCurrentView("list")}>
-          <ArrowLeft className="w-4 h-4 mr-2" /> Back to List
-        </Button>
-        <Card className="border-2 max-w-2xl mx-auto">
-          <CardHeader>
-            <CardTitle>Patient ID Card</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="bg-gradient-to-br from-health-500 to-health-600 rounded-2xl p-8 text-white shadow-2xl">
-              <div className="flex items-start justify-between mb-6">
-                <div>
-                  <h3 className="text-2xl font-bold mb-1">MHO Bongabong</h3>
-                  <p className="text-health-100 text-sm">Municipal Health Office</p>
-                </div>
-                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center">
-                  <Activity className="w-7 h-7 text-health-600" />
-                </div>
-              </div>
-              <div className="flex items-center gap-6 mb-6">
-                <div className="w-24 h-24 rounded-full bg-white/20 flex items-center justify-center text-4xl font-bold">
-                  {selectedPatient.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
-                </div>
-                <div>
-                  <h4 className="text-2xl font-bold mb-1">{selectedPatient.name}</h4>
-                  <p className="text-health-100">Patient ID: {selectedPatient.id}</p>
-                  <p className="text-health-100">
-                    DOB: {new Date(selectedPatient.dob).toLocaleDateString("en-PH")}
-                  </p>
-                  <p className="text-health-100">Brgy. {selectedPatient.barangay}</p>
-                </div>
-              </div>
-              <div className="bg-white rounded-xl p-6 text-gray-900">
-                <div className="flex items-center justify-center mb-4">
-                  <div className="w-48 h-48 bg-white border-4 border-health-200 rounded-xl flex items-center justify-center">
-                    <QrCode className="w-32 h-32 text-health-600" />
-                  </div>
-                </div>
-                <p className="text-center text-sm text-gray-600">Scan QR code to access patient record</p>
-              </div>
-              <div className="mt-6 pt-6 border-t border-health-400 grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <p className="text-health-100 mb-1">Blood Group</p>
-                  <p className="font-semibold">{selectedPatient.bloodGroup}</p>
-                </div>
-                <div>
-                  <p className="text-health-100 mb-1">PhilHealth ID</p>
-                  <p className="font-semibold">{selectedPatient.philhealthId ?? "N/A"}</p>
-                </div>
-              </div>
-            </div>
-            <div className="flex gap-3 mt-6">
-              <Button className="flex-1 bg-gradient-to-r from-health-500 to-health-600">
-                <Download className="w-4 h-4 mr-2" /> Download Card
-              </Button>
-              <Button variant="outline" className="flex-1">
-                <FileText className="w-4 h-4 mr-2" /> Print Card
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   // ─── Merge View ────────────────────────────────────────────────────────────
   function renderMerge() {
     return (
@@ -1145,7 +1203,6 @@ export default function PatientManagement() {
     switch (currentView) {
       case "dashboard": return renderDashboard();
       case "list": return renderMasterList();
-      case "qr": return renderQR();
       case "merge": return renderMerge();
       default: return null;
     }
@@ -1165,7 +1222,7 @@ export default function PatientManagement() {
           </Link>
           <div className="flex items-center gap-2">
             <span className="text-sm font-medium text-gray-600 hidden sm:inline">{user?.name}</span>
-            <Button variant="outline" size="sm" onClick={() => { logout(); navigate("/"); }}>
+            <Button variant="outline" size="sm" onClick={() => setShowLogoutDialog(true)}>
               <LogOut className="w-4 h-4 mr-2" /> Logout
             </Button>
             <button
@@ -1339,13 +1396,7 @@ export default function PatientManagement() {
             </div>
 
             <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => { handleGenerateQR(selectedPatient); setShowProfileModal(false); }}
-              >
-                <QrCode className="w-4 h-4 mr-2" /> Get QR Card
-              </Button>
-              <Button className="bg-gradient-to-r from-health-500 to-health-600">
+              <Button className="bg-gradient-to-r from-health-500 to-health-600" onClick={() => openEditDialog(selectedPatient)}>
                 <Edit className="w-4 h-4 mr-2" /> Edit Patient
               </Button>
             </DialogFooter>
@@ -1519,6 +1570,204 @@ export default function PatientManagement() {
             </Button>
             <Button className="bg-gradient-to-r from-health-500 to-health-600" onClick={handleAddPatient}>
               Create Record
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Patient Record Dialog */}
+      <Dialog open={showEditDialog} onOpenChange={(open) => { setShowEditDialog(open); if (!open) { setForm(EMPTY_FORM); setFormErrors([]); }}}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Patient Record</DialogTitle>
+            <DialogDescription>Update patient information below.</DialogDescription>
+          </DialogHeader>
+
+          {/* Validation errors */}
+          {formErrors.length > 0 && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm space-y-1">
+              {formErrors.map((e, i) => <p key={i}>• {e}</p>)}
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-2">
+            {/* Patient ID */}
+            <div className="col-span-2">
+              <Label>Patient ID</Label>
+              <Input
+                className="mt-2 bg-gray-50 font-mono text-health-600 font-semibold"
+                value={selectedPatient?.id || ""}
+                readOnly
+              />
+            </div>
+
+            {/* Full Name */}
+            <div className="col-span-2">
+              <Label>Full Name <span className="text-red-500">*</span></Label>
+              <Input
+                placeholder="Juan Dela Cruz"
+                className="mt-2"
+                value={form.name}
+                onChange={(e) => setField("name", e.target.value)}
+              />
+            </div>
+
+            {/* DOB */}
+            <div>
+              <Label>Date of Birth <span className="text-red-500">*</span></Label>
+              <Input
+                type="date"
+                className="mt-2"
+                value={form.dob}
+                onChange={(e) => setField("dob", e.target.value)}
+                max={new Date().toISOString().split("T")[0]}
+              />
+              {form.dob && (
+                <p className="text-xs text-gray-400 mt-1">
+                  Age: {getAge(form.dob)} yrs · {getAgeGroup(form.dob)}
+                </p>
+              )}
+            </div>
+
+            {/* Gender */}
+            <div>
+              <Label>Gender <span className="text-red-500">*</span></Label>
+              <Select value={form.gender} onValueChange={(v) => setField("gender", v as "Male" | "Female")}>
+                <SelectTrigger className="mt-2"><SelectValue placeholder="Select gender" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Male">Male</SelectItem>
+                  <SelectItem value="Female">Female</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Barangay */}
+            <div>
+              <Label>Barangay <span className="text-red-500">*</span></Label>
+              <Select value={form.barangay} onValueChange={(v) => setField("barangay", v)}>
+                <SelectTrigger className="mt-2"><SelectValue placeholder="Select barangay" /></SelectTrigger>
+                <SelectContent>
+                  {BONGABONG_BARANGAYS.map((b) => (
+                    <SelectItem key={b} value={b}>{b}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Contact */}
+            <div>
+              <Label>Contact Number <span className="text-red-500">*</span></Label>
+              <Input
+                placeholder="09xx-xxx-xxxx"
+                className="mt-2"
+                value={form.contactNumber}
+                onChange={(e) => setField("contactNumber", e.target.value)}
+              />
+            </div>
+
+            {/* Service Type */}
+            <div>
+              <Label>Service Type <span className="text-red-500">*</span></Label>
+              <Select value={form.serviceType} onValueChange={(v) => setField("serviceType", v as ServiceType)}>
+                <SelectTrigger className="mt-2"><SelectValue placeholder="Select service" /></SelectTrigger>
+                <SelectContent>
+                  {SERVICE_TYPES.map((st) => (
+                    <SelectItem key={st} value={st}>{st}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* PhilHealth */}
+            <div>
+              <Label>PhilHealth ID <span className="text-gray-400 font-normal">(optional)</span></Label>
+              <Input
+                placeholder="12-xxxxxxxxx-x"
+                className="mt-2 font-mono"
+                value={form.philhealthId}
+                onChange={(e) => setField("philhealthId", e.target.value)}
+              />
+            </div>
+
+            {/* Blood Group */}
+            <div>
+              <Label>Blood Group</Label>
+              <Input
+                placeholder="A+"
+                className="mt-2"
+                value={form.bloodGroup}
+                onChange={(e) => setField("bloodGroup", e.target.value)}
+              />
+            </div>
+
+            {/* Allergies */}
+            <div>
+              <Label>Known Allergies</Label>
+              <Input
+                placeholder="None"
+                className="mt-2"
+                value={form.allergies}
+                onChange={(e) => setField("allergies", e.target.value)}
+              />
+            </div>
+
+            {/* Email */}
+            <div>
+              <Label>Email <span className="text-gray-400 font-normal">(optional)</span></Label>
+              <Input
+                type="email"
+                placeholder="patient@email.com"
+                className="mt-2"
+                value={form.email}
+                onChange={(e) => setField("email", e.target.value)}
+              />
+            </div>
+
+            {/* Address */}
+            <div className="col-span-2">
+              <Label>Full Address</Label>
+              <Textarea
+                placeholder="Purok 1, Brgy. Poblacion, Bongabong, Oriental Mindoro"
+                className="mt-2"
+                value={form.address}
+                onChange={(e) => setField("address", e.target.value)}
+              />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => { setShowEditDialog(false); setForm(EMPTY_FORM); setFormErrors([]); }}>
+              Cancel
+            </Button>
+            <Button className="bg-gradient-to-r from-health-500 to-health-600" onClick={handleEditPatient}>
+              Update Record
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Logout Confirmation Dialog */}
+      <Dialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Confirm Logout</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to logout? You will need to sign in again to access the system.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex gap-2 sm:gap-0">
+            <Button variant="outline" onClick={() => setShowLogoutDialog(false)}>
+              Cancel
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={() => { 
+                logout(); 
+                navigate("/"); 
+              }}
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              Logout
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -5,6 +5,15 @@ import StaffDirectory from "./StaffDirectory";
 import DutySchedule from "./DutySchedule";
 import AdminSettings from "./Settings";
 import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   Activity,
   ArrowUpRight,
@@ -25,6 +34,7 @@ import {
   Clock,
   AlertCircle,
 } from "lucide-react";
+import { jsPDF } from "jspdf";
 
 type AdminTabKey =
   | "overview"
@@ -148,6 +158,7 @@ export default function SuperAdminDashboard() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<AdminTabKey>("overview");
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedReport, setSelectedReport] = useState<string | null>(null);
   const [approvalItems, setApprovalItems] = useState(INITIAL_APPROVAL_ITEMS);
@@ -260,41 +271,93 @@ export default function SuperAdminDashboard() {
     const content = generateReportContent(reportId);
     
     if (format === 'pdf') {
-      // Generate properly formatted PDF content
-      const pdfContent = `
-═══════════════════════════════════════════════════════════════
-                MEDICAL HEALTH OFFICE - BONGABONG
-                     ${report.title.toUpperCase()}
-═══════════════════════════════════════════════════════════════
-
-Period: ${report.period}
-Generated: ${new Date().toLocaleString('en-PH', { 
-  dateStyle: 'full', 
-  timeStyle: 'short' 
-})}
-
-SUMMARY
----------------------------------------------------------------
-${report.summary}
-
-DETAILED DATA
----------------------------------------------------------------
-${formatContentForPDF(content)}
-
-═══════════════════════════════════════════════════════════════
-                    End of Report
-═══════════════════════════════════════════════════════════════
-      `.trim();
+      // Generate actual PDF using jsPDF
+      const doc = new jsPDF();
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const margin = 20;
+      let yPosition = margin;
       
-      const blob = new Blob([pdfContent], { type: 'text/plain;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${report.title.replace(/\s+/g, '-')}_${new Date().toISOString().split('T')[0]}.txt`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      // Helper function to add text with word wrap
+      const addText = (text: string, fontSize: number, isBold: boolean = false, isCenter: boolean = false) => {
+        doc.setFontSize(fontSize);
+        doc.setFont('helvetica', isBold ? 'bold' : 'normal');
+        
+        const lines = doc.splitTextToSize(text, pageWidth - 2 * margin);
+        lines.forEach((line: string) => {
+          if (yPosition > pageHeight - margin) {
+            doc.addPage();
+            yPosition = margin;
+          }
+          const x = isCenter ? pageWidth / 2 : margin;
+          const align = isCenter ? 'center' : 'left';
+          doc.text(line, x, yPosition, { align: align as any });
+          yPosition += fontSize * 0.5;
+        });
+      };
+      
+      const addLine = () => {
+        yPosition += 3;
+        doc.line(margin, yPosition, pageWidth - margin, yPosition);
+        yPosition += 5;
+      };
+      
+      // Header
+      addText('MEDICAL HEALTH OFFICE - BONGABONG', 16, true, true);
+      yPosition += 3;
+      addText(report.title.toUpperCase(), 14, true, true);
+      yPosition += 8;
+      addLine();
+      
+      // Metadata
+      addText(`Period: ${report.period}`, 10);
+      addText(`Generated: ${new Date().toLocaleString('en-PH', { 
+        dateStyle: 'full', 
+        timeStyle: 'short' 
+      })}`, 10);
+      yPosition += 8;
+      
+      // Summary section
+      addText('SUMMARY', 12, true);
+      yPosition += 2;
+      addLine();
+      addText(report.summary, 10);
+      yPosition += 8;
+      
+      // Detailed data section
+      addText('DETAILED DATA', 12, true);
+      yPosition += 2;
+      addLine();
+      
+      if (content) {
+        Object.entries(content).forEach(([key, value]) => {
+          // Section title
+          addText(key.toUpperCase().replace(/_/g, ' '), 11, true);
+          yPosition += 2;
+          
+          if (Array.isArray(value)) {
+            value.forEach((item: any, index: number) => {
+              addText(`[${index + 1}]`, 10, true);
+              Object.entries(item).forEach(([k, v]) => {
+                addText(`  ${k.replace(/_/g, ' ')}: ${v}`, 9);
+              });
+              yPosition += 2;
+            });
+          } else if (typeof value === 'object' && value !== null) {
+            Object.entries(value).forEach(([k, v]) => {
+              addText(`  ${k.replace(/_/g, ' ')}: ${v}`, 9);
+            });
+          } else {
+            addText(`  ${value}`, 9);
+          }
+          yPosition += 5;
+        });
+      } else {
+        addText('No data available', 10);
+      }
+      
+      // Save PDF
+      doc.save(`${report.title.replace(/\s+/g, '-')}_${new Date().toISOString().split('T')[0]}.pdf`);
     } else if (format === 'csv') {
       // Generate properly formatted CSV for Excel
       let csvContent = '';
@@ -652,7 +715,7 @@ RECOMMENDATIONS
           <div className="border-t border-gray-100 p-4">
             <button
               type="button"
-              onClick={handleLogout}
+              onClick={() => setShowLogoutDialog(true)}
               className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-gray-600 transition-all hover:bg-red-50 hover:text-red-600"
             >
               <LogOut className="h-5 w-5 shrink-0" />
@@ -776,20 +839,30 @@ RECOMMENDATIONS
                 <div className="rounded-2xl border border-gray-200 bg-gradient-to-br from-cyan-500 to-cyan-600 p-6 shadow-lg text-white">
                   <h3 className="mb-4 text-lg font-bold">Quick Actions</h3>
                   <div className="space-y-2">
-                    {[
-                      "Review roster changes",
-                      "Approve urgent requests",
-                      "Open weekly reports",
-                    ].map((action) => (
-                      <button
-                        key={action}
-                        type="button"
-                        className="flex w-full items-center justify-between rounded-xl bg-white/20 backdrop-blur-sm px-4 py-3 text-left text-sm font-semibold transition-all hover:bg-white/30"
-                      >
-                        {action}
-                        <ArrowUpRight className="h-4 w-4" />
-                      </button>
-                    ))}
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab("schedule")}
+                      className="flex w-full items-center justify-between rounded-xl bg-white/20 backdrop-blur-sm px-4 py-3 text-left text-sm font-semibold transition-all hover:bg-white/30"
+                    >
+                      Review roster changes
+                      <ArrowUpRight className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab("approvals")}
+                      className="flex w-full items-center justify-between rounded-xl bg-white/20 backdrop-blur-sm px-4 py-3 text-left text-sm font-semibold transition-all hover:bg-white/30"
+                    >
+                      Approve urgent requests
+                      <ArrowUpRight className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab("reports")}
+                      className="flex w-full items-center justify-between rounded-xl bg-white/20 backdrop-blur-sm px-4 py-3 text-left text-sm font-semibold transition-all hover:bg-white/30"
+                    >
+                      Open weekly reports
+                      <ArrowUpRight className="h-4 w-4" />
+                    </button>
                   </div>
                 </div>
               </div>
@@ -1253,6 +1326,30 @@ RECOMMENDATIONS
 
         {activeTab === "settings" && <AdminSettings />}
         </main>
+
+      {/* Logout Confirmation Dialog */}
+      <Dialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Confirm Logout</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to logout? You will need to sign in again to access the system.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex gap-2 sm:gap-0">
+            <Button variant="outline" onClick={() => setShowLogoutDialog(false)}>
+              Cancel
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={handleLogout}
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              Logout
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

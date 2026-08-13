@@ -2,8 +2,18 @@ import { useAuth } from "@/context/AuthContext";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   AlertCircle,
+  Bell,
   CalendarDays,
   Check,
   ChevronLeft,
@@ -953,7 +963,10 @@ export default function StaffDashboard() {
   const { user, isLoggedIn, logout, loading } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<StaffTabKey>("overview");
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [showNotifications, setShowNotifications] = useState(false);
 
   useEffect(() => {
     if (loading) return; // Wait for auth to load
@@ -961,6 +974,22 @@ export default function StaffDashboard() {
     if (!isLoggedIn) navigate("/login");
     else if (user?.role === "super_admin" || user?.role === "admin") navigate("/admin");
   }, [isLoggedIn, user, navigate, loading]);
+
+  // Load notifications
+  useEffect(() => {
+    const loadNotifications = () => {
+      const stored = localStorage.getItem('staffNotifications');
+      if (stored) {
+        const allNotifications = JSON.parse(stored);
+        setNotifications(allNotifications.filter((n: any) => !n.read));
+      }
+    };
+    
+    loadNotifications();
+    // Poll for new notifications every 30 seconds
+    const interval = setInterval(loadNotifications, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -1075,9 +1104,24 @@ export default function StaffDashboard() {
               <p className="truncate text-sm font-semibold text-slate-800">{user.name}</p>
               <p className="truncate text-xs capitalize text-slate-400">{user.role}</p>
             </div>
+            {/* Notification Bell */}
             <button
               type="button"
-              onClick={handleLogout}
+              onClick={() => setShowNotifications(!showNotifications)}
+              className="relative rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-cyan-50 hover:text-cyan-600"
+              title="Notifications"
+            >
+              <Bell className="h-4 w-4" />
+              {notifications.length > 0 && (
+                <span className="absolute top-0 right-0 flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+                </span>
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowLogoutDialog(true)}
               className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
               title="Log out"
             >
@@ -1085,6 +1129,49 @@ export default function StaffDashboard() {
             </button>
           </div>
         </div>
+
+        {/* Notification Dropdown */}
+        {showNotifications && (
+          <div className="absolute right-4 top-20 w-80 bg-white rounded-xl shadow-lg border border-slate-200 z-50 max-h-96 overflow-y-auto">
+            <div className="p-4 border-b border-slate-200 flex items-center justify-between">
+              <h3 className="font-semibold text-slate-900">Notifications</h3>
+              <button onClick={() => setShowNotifications(false)} className="text-slate-400 hover:text-slate-600">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            {notifications.length === 0 ? (
+              <div className="p-8 text-center text-slate-400">
+                <Bell className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">No new notifications</p>
+              </div>
+            ) : (
+              <div className="divide-y divide-slate-100">
+                {notifications.map((notif) => (
+                  <div key={notif.id} className="p-4 hover:bg-slate-50 transition-colors">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-full bg-cyan-100 flex items-center justify-center flex-shrink-0">
+                        <CalendarDays className="h-4 w-4 text-cyan-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-sm text-slate-900">{notif.title}</p>
+                        <p className="text-xs text-slate-600 mt-1">{notif.message}</p>
+                        <p className="text-xs text-slate-400 mt-2">
+                          {new Date(notif.timestamp).toLocaleDateString('en-US', { 
+                            month: 'short', 
+                            day: 'numeric', 
+                            hour: '2-digit', 
+                            minute: '2-digit' 
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
       </aside>
 
       {/* ── Main content ── */}
@@ -1099,6 +1186,30 @@ export default function StaffDashboard() {
         {activeTab === "leave"     && <LeaveTab leaveBalance={profile.leaveBalance} />}
         {activeTab === "profile"   && <ProfileTab userName={user.name} email={user.email} profile={profile} />}
       </main>
+
+      {/* Logout Confirmation Dialog */}
+      <Dialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Confirm Logout</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to logout? You will need to sign in again to access the system.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex gap-2 sm:gap-0">
+            <Button variant="outline" onClick={() => setShowLogoutDialog(false)}>
+              Cancel
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={handleLogout}
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              Logout
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
